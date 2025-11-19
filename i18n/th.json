@@ -141,6 +141,15 @@
     "STATUS_REPAIR_APPROVED": "เพิ่มเวลาลงเวลาผ่าน",
     "PUNCH_IN": "เข้างาน",
     "PUNCH_OUT": "ออกงาน",
+    "PUNCH_SECTION_DESC": "คลิกปุ่มด้านล่างเพื่อลงเวลาเข้าหรือออกงาน",
+    "STATUS_REPAIR_PENDING_IN": "การลงเวลาเข้างานแก้ไขรอการอนุมัติ",
+    "STATUS_REPAIR_PENDING_OUT": "การลงเวลาออกงานแก้ไขรอการอนุมัติ",
+    "STATUS_REPAIR_APPROVED_IN": "การลงเวลาเข้างานแก้ไขได้รับอนุมัติ",
+    "STATUS_REPAIR_APPROVED_OUT": "การลงเวลาออกงานแก้ไขได้รับอนุมัติ",
+    "STATUS_REPAIR_REJECTED_IN": "การลงเวลาเข้างานแก้ไขถูกปฏิเสธ",
+    "STATUS_REPAIR_REJECTED_OUT": "การลงเวลาออกงานแก้ไขถูกปฏิเสธ",
+    "REAPPLY": "ยื่นคำขออีกครั้ง",
+
 
     "TAB_OVERTIME": "ทำงานล่วงเวลา",
     "OVERTIME_APPLY_TITLE": "ยื่นขอทำงานล่วงเวลา",
