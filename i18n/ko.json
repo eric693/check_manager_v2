@@ -152,6 +152,7 @@
   "STATUS_REPAIR_REJECTED_OUT": "퇴근 타임카드 보정 거부됨",
   "REAPPLY": "재신청",
 
+  "_comment3": "＿＿＿＿＿초과근무 관리＿＿＿＿",
   "TAB_OVERTIME": "초과근무",
   "OVERTIME_APPLY_TITLE": "초과근무 신청",
   "OVERTIME_APPLY_DESCRIPTION": "다음 정보를 작성하여 초과근무 신청을 제출하세요",
@@ -182,6 +183,7 @@
   "ERROR_SUBMIT_OVERTIME": "초과근무 신청 제출 실패",
   "ERR_NO_PERMISSION": "이 작업을 수행할 권한이 없습니다",
 
+  "_comment4": "＿＿＿＿＿휴가 관리＿＿＿＿",
   "TAB_LEAVE": "휴가",
   "LEAVE_BALANCE_TITLE": "휴가 잔여일",
   "LEAVE_BALANCE_DESCRIPTION": "사용 가능한 휴가 일수",
@@ -229,6 +231,7 @@
   "ENTER_REJECT_REASON": "거부 사유를 입력하세요:",
   "REVIEW_COMMENT_LABEL": "검토 의견:",
 
+  "_comment5": "＿＿＿＿＿보고서 내보내기＿＿＿＿",
   "EXPORT_ATTENDANCE_BTN": "이번 달 근태 보고서 내보내기",
   "EXPORT_LOADING": "보고서 준비 중...",
   "EXPORT_SUCCESS": "보고서를 성공적으로 내보냈습니다!",
@@ -239,6 +242,7 @@
   "ADMIN_EXPORT_MONTH_LABEL": "월 선택",
   "ADMIN_EXPORT_ALL_BTN": "전체 직원 보고서 내보내기",
 
+  "_comment6": "＿＿＿＿＿근무표 관리＿＿＿＿",
   "TAB_SHIFT": "근무표",
   "SHIFT_TITLE": "근무표 관리",
   "SHIFT_DESCRIPTION": "직원 근무 일정을 확인하고 관리합니다",
@@ -256,18 +260,28 @@
   "LATE_PUNCH_WARNING": "주의: 근무 시작 시간은 {startTime}이며, 30분 이상 지각하였습니다.",
   "NO_SHIFT_TODAY": "오늘 근무 기록이 없습니다",
 
+  "_comment7": "＿＿＿＿＿급여 관리 (완전판)＿＿＿＿",
   "TAB_SALARY": "급여",
+  
   "SALARY_CURRENT_TITLE": "이번 달 급여",
   "SALARY_NOT_CALCULATED": "이번 달 급여가 아직 계산되지 않았습니다",
   "SALARY_CONTACT_ADMIN": "급여 계산은 관리자에게 문의하세요",
+  
   "SALARY_GROSS": "총 지급액",
   "SALARY_DEDUCTIONS": "총 공제액",
   "SALARY_NET": "실 수령액",
+  
   "SALARY_EARNINGS": "지급 항목",
   "SALARY_BASE": "기본급",
+  "SALARY_POSITION_ALLOWANCE": "직책 수당",
+  "SALARY_MEAL_ALLOWANCE": "식비",
+  "SALARY_TRANSPORT_ALLOWANCE": "교통비",
+  "SALARY_ATTENDANCE_BONUS": "개근 수당",
+  "SALARY_PERFORMANCE_BONUS": "성과 수당",
   "SALARY_WEEKDAY_OT": "평일 초과근무 수당",
   "SALARY_REST_OT": "휴일 초과근무 수당",
   "SALARY_HOLIDAY_OT": "공휴일 초과근무 수당",
+  
   "SALARY_DEDUCTIONS_DETAIL": "공제 항목",
   "SALARY_LABOR_INS": "고용보험료",
   "SALARY_HEALTH_INS": "건강보험료",
@@ -275,23 +289,54 @@
   "SALARY_PENSION": "국민연금",
   "SALARY_TAX": "소득세",
   "SALARY_LEAVE_DEDUCT": "휴가 공제",
+  "SALARY_WELFARE_FEE": "복지비",
+  "SALARY_DORMITORY_FEE": "기숙사비",
+  "SALARY_GROUP_INSURANCE": "단체보험료",
+  "SALARY_OTHER_DEDUCTIONS": "기타 공제",
+  
   "SALARY_BANK_INFO": "계좌 정보",
   "SALARY_BANK": "은행",
   "SALARY_ACCOUNT": "계좌번호",
+  "SALARY_UNKNOWN_BANK": "알 수 없는 은행",
+  
   "SALARY_HISTORY_TITLE": "급여 이력",
   "SALARY_NO_HISTORY": "아직 이력이 없습니다",
+  "SALARY_STATUS_CALCULATED": "계산됨",
+
   "SALARY_MANAGEMENT_TITLE": "급여 관리",
   "SALARY_MANAGEMENT_DESC": "직원 급여 정보를 확인하고 관리합니다",
   "BTN_SALARY_SYSTEM": "급여 관리 시스템으로 이동",
+  
   "SALARY_FEATURES_TITLE": "기능 설명",
   "SALARY_FEATURE_1": "정규직(월급제) 및 시간제(시급제) 직원 지원",
   "SALARY_FEATURE_2": "초과근무 수당 및 공제 항목 자동 계산",
   "SALARY_FEATURE_3": "급여 명세서 생성 및 관리",
   "SALARY_FEATURE_4": "시급 상세 내역 추적",
+  
   "SALARY_THIS_MONTH": "이번 달 급여",
   "WORK_HOURS": "근무 시간",
   "SALARY_CALCULATED": "계산 중...",
   "HOURS_THIS_MONTH": "이번 달 통계",
+  
   "SALARY_REMINDER_TITLE": "안내",
-  "SALARY_REMINDER_TEXT": "급여 시스템은 출퇴근 기록, 초과근무, 휴가 기록을 자동으로 통합하여 계산합니다. 정확한 급여 계산을 위해 제시간에 출퇴근 기록을 해주세요."
+  "SALARY_REMINDER_TEXT": "급여 시스템은 출퇴근 기록, 초과근무, 휴가 기록을 자동으로 통합하여 계산합니다. 정확한 급여 계산을 위해 제시간에 출퇴근 기록을 해주세요.",
+  
+  "SALARY_NO_RECORD_TITLE": "급여 기록 없음",
+  "SALARY_NO_RECORD_TEXT": "이번 달 급여 데이터가 아직 없습니다",
+  "SALARY_SELECT_MONTH": "조회 월을 선택하세요",
+  "SALARY_FILL_REQUIRED": "필수 항목(직원 ID, 이름, 기본급)을 입력하세요",
+  "SALARY_SAVING": "급여 설정 저장 중...",
+  "SALARY_SAVE_SUCCESS": "✅ 급여 설정이 저장되었습니다",
+  "SALARY_SAVE_FAILED": "❌ 저장 실패: {msg}",
+  "SALARY_CALC_MISSING_PARAMS": "직원 ID와 계산 연월을 입력하세요",
+  "SALARY_CALCULATING": "급여 계산 중...",
+  "SALARY_CALC_SUCCESS": "✅ 급여 계산 완료",
+  "SALARY_CALC_FAILED": "❌ 계산 실패: {msg}",
+  "SALARY_CALC_RESULT_TITLE": "급여 계산 결과",
+  "SALARY_SAVE_CONFIRM": "이 급여 기록을 저장하시겠습니까?",
+  "SALARY_RECORD_SAVING": "급여 기록 저장 중...",
+  "SALARY_RECORD_SAVE_SUCCESS": "✅ 급여 기록이 저장되었습니다",
+  "SALARY_RECORD_SAVE_FAILED": "❌ 급여 기록 저장 실패: {msg}",
+  "ERROR_INIT_FAILED": "초기화 실패: {msg}",
+  "ERROR_LOAD_FAILED": "로드 실패"
 }

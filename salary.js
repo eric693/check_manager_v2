@@ -1,4 +1,4 @@
-// salary.js - 薪資管理前端邏輯（完整版 v2.0 - 含多語言支援）
+// salary.js - 薪資管理前端邏輯（完整版 v2.2 - 修正多語言觸發）
 
 // ==================== 檢查依賴 ====================
 if (typeof callApifetch !== 'function') {
@@ -12,7 +12,7 @@ if (typeof callApifetch !== 'function') {
  */
 async function initSalaryTab() {
     try {
-        console.log('🎯 開始初始化薪資頁面（完整版 v2.0）');
+        console.log('🎯 開始初始化薪資頁面（完整版 v2.2）');
         
         // 步驟 1：驗證 Session
         console.log('📡 正在驗證 Session...');
@@ -20,7 +20,7 @@ async function initSalaryTab() {
         
         if (!session.ok || !session.user) {
             console.error('❌ Session 驗證失敗:', session);
-            showNotification(t('PLEASE_RELOGIN'), 'error');
+            showNotification(t('PLEASE_RELOGIN') || '請重新登入', 'error');
             return;
         }
         
@@ -52,12 +52,18 @@ async function initSalaryTab() {
             bindSalaryEvents();
         }
         
-        console.log('✅ 薪資頁面初始化完成（完整版 v2.0）！');
+        // ⭐ 步驟 5：初始化後翻譯整個頁面
+        console.log('🌐 執行初始翻譯...');
+        if (typeof renderTranslations === 'function') {
+            renderTranslations();
+        }
+        
+        console.log('✅ 薪資頁面初始化完成（完整版 v2.2）！');
         
     } catch (error) {
         console.error('❌ 初始化失敗:', error);
         console.error('錯誤堆疊:', error.stack);
-        showNotification(t('ERROR_INIT_FAILED', { msg: error.message }), 'error');
+        showNotification(t('ERROR_INIT_FAILED', { msg: error.message }) || `初始化失敗: ${error.message}`, 'error');
     }
 }
 
@@ -91,11 +97,21 @@ async function loadCurrentEmployeeSalary() {
             console.log('✅ 成功載入薪資資料');
             displayEmployeeSalary(result.data);
             if (contentEl) contentEl.style.display = 'block';
+            
+            // ⭐ 翻譯顯示的內容
+            if (typeof renderTranslations === 'function') {
+                renderTranslations(contentEl);
+            }
         } else {
             console.log(`⚠️ 沒有 ${currentMonth} 的薪資記錄`);
             if (emptyEl) {
                 showNoSalaryMessage(currentMonth);
                 emptyEl.style.display = 'block';
+                
+                // ⭐ 翻譯空狀態訊息
+                if (typeof renderTranslations === 'function') {
+                    renderTranslations(emptyEl);
+                }
             }
         }
         
@@ -116,7 +132,7 @@ async function loadEmployeeSalaryByMonth() {
     const yearMonth = monthInput ? monthInput.value : '';
     
     if (!yearMonth) {
-        showNotification(t('SALARY_SELECT_MONTH'), 'error');
+        showNotification(t('SALARY_SELECT_MONTH') || '請選擇查詢月份', 'error');
         return;
     }
     
@@ -146,10 +162,20 @@ async function loadEmployeeSalaryByMonth() {
             console.log(`✅ 找到 ${yearMonth} 的薪資記錄`);
             displayEmployeeSalary(res.data);
             contentEl.style.display = 'block';
+            
+            // ⭐ 翻譯顯示的內容
+            if (typeof renderTranslations === 'function') {
+                renderTranslations(contentEl);
+            }
         } else {
             console.log(`⚠️ 沒有 ${yearMonth} 的薪資記錄`);
             showNoSalaryMessage(yearMonth);
             emptyEl.style.display = 'block';
+            
+            // ⭐ 翻譯空狀態訊息
+            if (typeof renderTranslations === 'function') {
+                renderTranslations(emptyEl);
+            }
         }
         
     } catch (error) {
@@ -259,9 +285,19 @@ async function loadSalaryHistory() {
                 const item = createSalaryHistoryItem(salary);
                 listEl.appendChild(item);
             });
+            
+            // ⭐ 翻譯歷史列表
+            if (typeof renderTranslations === 'function') {
+                renderTranslations(listEl);
+            }
         } else {
             console.log('⚠️ 沒有薪資歷史記錄');
             emptyEl.style.display = 'block';
+            
+            // ⭐ 翻譯空狀態
+            if (typeof renderTranslations === 'function') {
+                renderTranslations(emptyEl);
+            }
         }
         
     } catch (error) {
@@ -284,7 +320,7 @@ function createSalaryHistoryItem(salary) {
                 ${salary['年月'] || '--'}
             </div>
             <div class="text-sm text-gray-400 mt-1">
-                ${salary['狀態'] || t('SALARY_STATUS_CALCULATED')}
+                ${salary['狀態'] || t('SALARY_STATUS_CALCULATED') || '已計算'}
             </div>
         </div>
         <div class="text-right">
@@ -292,7 +328,7 @@ function createSalaryHistoryItem(salary) {
                 ${formatCurrency(salary['實發金額'])}
             </div>
             <div class="text-xs text-gray-400 mt-1">
-                ${t('SALARY_GROSS')} ${formatCurrency(salary['應發總額'])}
+                <span data-i18n="SALARY_GROSS">應發</span> ${formatCurrency(salary['應發總額'])}
             </div>
         </div>
     `;
@@ -308,11 +344,11 @@ function showNoSalaryMessage(month) {
     if (emptyEl) {
         emptyEl.innerHTML = `
             <div class="empty-state-icon">📄</div>
-            <div class="empty-state-title">${t('SALARY_NO_RECORD_TITLE')}</div>
+            <div class="empty-state-title" data-i18n="SALARY_NO_RECORD_TITLE">尚無薪資記錄</div>
             <div class="empty-state-text">
-                <p>${t('SALARY_NO_RECORD_TEXT', { month: month })}</p>
+                <p data-i18n="SALARY_NO_RECORD_TEXT">此月份還沒有薪資資料</p>
                 <p style="margin-top: 0.5rem; font-size: 0.875rem;">
-                    💡 ${t('SALARY_CONTACT_ADMIN')}
+                    💡 <span data-i18n="SALARY_CONTACT_ADMIN">請聯繫管理員進行薪資計算</span>
                 </p>
             </div>
         `;
@@ -391,12 +427,12 @@ async function handleSalaryConfigSubmit(e) {
     const note = safeGetValue('config-note');
     
     if (!employeeId || !employeeName || !baseSalary || parseFloat(baseSalary) <= 0) {
-        showNotification(t('SALARY_FILL_REQUIRED'), 'error');
+        showNotification(t('SALARY_FILL_REQUIRED') || '請填寫必填欄位', 'error');
         return;
     }
     
     try {
-        showNotification(t('SALARY_SAVING'), 'info');
+        showNotification(t('SALARY_SAVING') || '正在儲存...', 'info');
         
         const queryString = 
             `employeeId=${encodeURIComponent(employeeId)}` +
@@ -434,7 +470,7 @@ async function handleSalaryConfigSubmit(e) {
         const res = await callApifetch(`setEmployeeSalaryTW&${queryString}`);
         
         if (res.ok) {
-            showNotification(t('SALARY_SAVE_SUCCESS'), 'success');
+            showNotification(t('SALARY_SAVE_SUCCESS') || '✅ 儲存成功', 'success');
             e.target.reset();
             
             // 重置所有輸入欄位為 0
@@ -467,12 +503,12 @@ async function handleSalaryConfigSubmit(e) {
                 setCalculatedValues(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
             }
         } else {
-            showNotification(t('SALARY_SAVE_FAILED', { msg: res.msg || res.message }), 'error');
+            showNotification(t('SALARY_SAVE_FAILED', { msg: res.msg || res.message }) || `❌ 儲存失敗: ${res.msg}`, 'error');
         }
         
     } catch (error) {
         console.error('❌ 設定薪資失敗:', error);
-        showNotification(t('SALARY_SAVE_FAILED', { msg: error.message }), 'error');
+        showNotification(t('SALARY_SAVE_FAILED', { msg: error.message }) || `❌ 儲存失敗: ${error.message}`, 'error');
     }
 }
 
@@ -490,30 +526,36 @@ async function handleSalaryCalculation() {
     const yearMonth = yearMonthEl.value;
     
     if (!employeeId || !yearMonth) {
-        showNotification(t('SALARY_CALC_MISSING_PARAMS'), 'error');
+        showNotification(t('SALARY_CALC_MISSING_PARAMS') || '❌ 請填寫完整資訊', 'error');
         return;
     }
     
     try {
-        showNotification(t('SALARY_CALCULATING'), 'info');
+        showNotification(t('SALARY_CALCULATING') || '正在計算...', 'info');
         
         const res = await callApifetch(`calculateMonthlySalary&employeeId=${encodeURIComponent(employeeId)}&yearMonth=${encodeURIComponent(yearMonth)}`);
         
         if (res.ok && res.data) {
             displaySalaryCalculation(res.data, resultEl);
             resultEl.style.display = 'block';
-            showNotification(t('SALARY_CALC_SUCCESS'), 'success');
             
-            if (confirm(t('SALARY_SAVE_CONFIRM'))) {
+            // ⭐ 翻譯計算結果
+            if (typeof renderTranslations === 'function') {
+                renderTranslations(resultEl);
+            }
+            
+            showNotification(t('SALARY_CALC_SUCCESS') || '✅ 計算完成', 'success');
+            
+            if (confirm(t('SALARY_SAVE_CONFIRM') || '是否要儲存此薪資記錄？')) {
                 await saveSalaryRecord(res.data);
             }
         } else {
-            showNotification(t('SALARY_CALC_FAILED', { msg: res.msg }), 'error');
+            showNotification(t('SALARY_CALC_FAILED', { msg: res.msg }) || `❌ 計算失敗: ${res.msg}`, 'error');
         }
         
     } catch (error) {
         console.error('❌ 計算薪資失敗:', error);
-        showNotification(t('SALARY_CALC_FAILED', { msg: error.message }), 'error');
+        showNotification(t('SALARY_CALC_FAILED', { msg: error.message }) || `❌ 計算失敗: ${error.message}`, 'error');
     }
 }
 
@@ -539,113 +581,113 @@ function displaySalaryCalculation(data, container) {
     container.innerHTML = `
         <div class="calculation-card">
             <h3 class="text-xl font-bold mb-4">
-                ${data.employeeName || '--'} - ${data.yearMonth || '--'} ${t('SALARY_CALC_RESULT_TITLE')}
+                ${data.employeeName || '--'} - ${data.yearMonth || '--'} <span data-i18n="SALARY_CALC_RESULT_TITLE">薪資計算結果</span>
             </h3>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                 <div class="info-card" style="background: rgba(34, 197, 94, 0.1);">
-                    <div class="info-label">${t('SALARY_GROSS')}</div>
+                    <div class="info-label" data-i18n="SALARY_GROSS">應發總額</div>
                     <div class="info-value" style="color: #22c55e;">${formatCurrency(data.grossSalary)}</div>
                 </div>
                 <div class="info-card" style="background: rgba(239, 68, 68, 0.1);">
-                    <div class="info-label">${t('SALARY_DEDUCTIONS')}</div>
+                    <div class="info-label" data-i18n="SALARY_DEDUCTIONS">扣款總額</div>
                     <div class="info-value" style="color: #ef4444;">${formatCurrency(totalDeductions)}</div>
                 </div>
                 <div class="info-card" style="background: rgba(168, 85, 247, 0.1);">
-                    <div class="info-label">${t('SALARY_NET')}</div>
+                    <div class="info-label" data-i18n="SALARY_NET">實發金額</div>
                     <div class="info-value" style="color: #a855f7;">${formatCurrency(data.netSalary)}</div>
                 </div>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="calculation-detail">
-                    <h4 class="font-semibold mb-3 text-green-400">${t('SALARY_EARNINGS')}</h4>
+                    <h4 class="font-semibold mb-3 text-green-400" data-i18n="SALARY_EARNINGS">應發項目</h4>
                     <div class="calculation-row">
-                        <span>${t('SALARY_BASE')}</span>
+                        <span data-i18n="SALARY_BASE">基本薪資</span>
                         <span class="font-mono">${formatCurrency(data.baseSalary)}</span>
                     </div>
                     <div class="calculation-row">
-                        <span>${t('SALARY_POSITION_ALLOWANCE')}</span>
+                        <span data-i18n="SALARY_POSITION_ALLOWANCE">職務加給</span>
                         <span class="font-mono">${formatCurrency(data.positionAllowance || 0)}</span>
                     </div>
                     <div class="calculation-row">
-                        <span>${t('SALARY_MEAL_ALLOWANCE')}</span>
+                        <span data-i18n="SALARY_MEAL_ALLOWANCE">伙食費</span>
                         <span class="font-mono">${formatCurrency(data.mealAllowance || 0)}</span>
                     </div>
                     <div class="calculation-row">
-                        <span>${t('SALARY_TRANSPORT_ALLOWANCE')}</span>
+                        <span data-i18n="SALARY_TRANSPORT_ALLOWANCE">交通補助</span>
                         <span class="font-mono">${formatCurrency(data.transportAllowance || 0)}</span>
                     </div>
                     <div class="calculation-row">
-                        <span>${t('SALARY_ATTENDANCE_BONUS')}</span>
+                        <span data-i18n="SALARY_ATTENDANCE_BONUS">全勤獎金</span>
                         <span class="font-mono">${formatCurrency(data.attendanceBonus || 0)}</span>
                     </div>
                     <div class="calculation-row">
-                        <span>${t('SALARY_PERFORMANCE_BONUS')}</span>
+                        <span data-i18n="SALARY_PERFORMANCE_BONUS">績效獎金</span>
                         <span class="font-mono">${formatCurrency(data.performanceBonus || 0)}</span>
                     </div>
                     <div class="calculation-row">
-                        <span>${t('SALARY_WEEKDAY_OT')}</span>
+                        <span data-i18n="SALARY_WEEKDAY_OT">平日加班費</span>
                         <span class="font-mono">${formatCurrency(data.weekdayOvertimePay)}</span>
                     </div>
                     <div class="calculation-row">
-                        <span>${t('SALARY_REST_OT')}</span>
+                        <span data-i18n="SALARY_REST_OT">休息日加班費</span>
                         <span class="font-mono">${formatCurrency(data.restdayOvertimePay)}</span>
                     </div>
                     <div class="calculation-row">
-                        <span>${t('SALARY_HOLIDAY_OT')}</span>
+                        <span data-i18n="SALARY_HOLIDAY_OT">國定假日加班費</span>
                         <span class="font-mono">${formatCurrency(data.holidayOvertimePay)}</span>
                     </div>
                     <div class="calculation-row total">
-                        <span>${t('SALARY_GROSS')}</span>
+                        <span data-i18n="SALARY_GROSS">應發總額</span>
                         <span>${formatCurrency(data.grossSalary)}</span>
                     </div>
                 </div>
                 
                 <div class="calculation-detail">
-                    <h4 class="font-semibold mb-3 text-red-400">${t('SALARY_DEDUCTIONS_DETAIL')}</h4>
+                    <h4 class="font-semibold mb-3 text-red-400" data-i18n="SALARY_DEDUCTIONS_DETAIL">扣款項目</h4>
                     <div class="calculation-row">
-                        <span>${t('SALARY_LABOR_INS')}</span>
+                        <span data-i18n="SALARY_LABOR_INS">勞保費</span>
                         <span class="font-mono">${formatCurrency(data.laborFee)}</span>
                     </div>
                     <div class="calculation-row">
-                        <span>${t('SALARY_HEALTH_INS')}</span>
+                        <span data-i18n="SALARY_HEALTH_INS">健保費</span>
                         <span class="font-mono">${formatCurrency(data.healthFee)}</span>
                     </div>
                     <div class="calculation-row">
-                        <span>${t('SALARY_EMPLOYMENT_INS')}</span>
+                        <span data-i18n="SALARY_EMPLOYMENT_INS">就業保險費</span>
                         <span class="font-mono">${formatCurrency(data.employmentFee)}</span>
                     </div>
                     <div class="calculation-row">
-                        <span>${t('SALARY_PENSION')}</span>
+                        <span data-i18n="SALARY_PENSION">勞退自提</span>
                         <span class="font-mono">${formatCurrency(data.pensionSelf)}</span>
                     </div>
                     <div class="calculation-row">
-                        <span>${t('SALARY_TAX')}</span>
+                        <span data-i18n="SALARY_TAX">所得稅</span>
                         <span class="font-mono">${formatCurrency(data.incomeTax)}</span>
                     </div>
                     <div class="calculation-row">
-                        <span>${t('SALARY_LEAVE_DEDUCT')}</span>
+                        <span data-i18n="SALARY_LEAVE_DEDUCT">請假扣款</span>
                         <span class="font-mono">${formatCurrency(data.leaveDeduction || 0)}</span>
                     </div>
                     <div class="calculation-row">
-                        <span>${t('SALARY_WELFARE_FEE')}</span>
+                        <span data-i18n="SALARY_WELFARE_FEE">福利金</span>
                         <span class="font-mono">${formatCurrency(data.welfareFee || 0)}</span>
                     </div>
                     <div class="calculation-row">
-                        <span>${t('SALARY_DORMITORY_FEE')}</span>
+                        <span data-i18n="SALARY_DORMITORY_FEE">宿舍費用</span>
                         <span class="font-mono">${formatCurrency(data.dormitoryFee || 0)}</span>
                     </div>
                     <div class="calculation-row">
-                        <span>${t('SALARY_GROUP_INSURANCE')}</span>
+                        <span data-i18n="SALARY_GROUP_INSURANCE">團保費用</span>
                         <span class="font-mono">${formatCurrency(data.groupInsurance || 0)}</span>
                     </div>
                     <div class="calculation-row">
-                        <span>${t('SALARY_OTHER_DEDUCTIONS')}</span>
+                        <span data-i18n="SALARY_OTHER_DEDUCTIONS">其他扣款</span>
                         <span class="font-mono">${formatCurrency(data.otherDeductions || 0)}</span>
                     </div>
                     <div class="calculation-row total">
-                        <span>${t('SALARY_NET')}</span>
+                        <span data-i18n="SALARY_NET">實發金額</span>
                         <span>${formatCurrency(data.netSalary)}</span>
                     </div>
                 </div>
@@ -659,7 +701,7 @@ function displaySalaryCalculation(data, container) {
  */
 async function saveSalaryRecord(data) {
     try {
-        showNotification(t('SALARY_RECORD_SAVING'), 'info');
+        showNotification(t('SALARY_RECORD_SAVING') || '正在儲存...', 'info');
         
         const queryString = 
             `employeeId=${encodeURIComponent(data.employeeId)}` +
@@ -692,14 +734,14 @@ async function saveSalaryRecord(data) {
         const res = await callApifetch(`saveMonthlySalary&${queryString}`);
         
         if (res.ok) {
-            showNotification(t('SALARY_RECORD_SAVE_SUCCESS'), 'success');
+            showNotification(t('SALARY_RECORD_SAVE_SUCCESS') || '✅ 儲存成功', 'success');
         } else {
-            showNotification(t('SALARY_RECORD_SAVE_FAILED', { msg: res.msg }), 'error');
+            showNotification(t('SALARY_RECORD_SAVE_FAILED', { msg: res.msg }) || `❌ 儲存失敗: ${res.msg}`, 'error');
         }
         
     } catch (error) {
         console.error('❌ 儲存薪資單失敗:', error);
-        showNotification(t('SALARY_RECORD_SAVE_FAILED', { msg: error.message }), 'error');
+        showNotification(t('SALARY_RECORD_SAVE_FAILED', { msg: error.message }) || `❌ 儲存失敗: ${error.message}`, 'error');
     }
 }
 
@@ -716,7 +758,7 @@ async function loadAllEmployeeSalaryFromList() {
     const yearMonth = yearMonthEl.value;
     
     if (!yearMonth) {
-        showNotification(t('SALARY_SELECT_MONTH'), 'error');
+        showNotification(t('SALARY_SELECT_MONTH') || '請選擇查詢月份', 'error');
         return;
     }
     
@@ -733,14 +775,29 @@ async function loadAllEmployeeSalaryFromList() {
                 const item = createAllSalaryItem(salary);
                 listEl.appendChild(item);
             });
+            
+            // ⭐ 翻譯列表
+            if (typeof renderTranslations === 'function') {
+                renderTranslations(listEl);
+            }
         } else {
-            listEl.innerHTML = `<p class="text-center text-gray-400 py-8">${t('SALARY_NO_HISTORY')}</p>`;
+            listEl.innerHTML = `<p class="text-center text-gray-400 py-8" data-i18n="SALARY_NO_HISTORY">尚無薪資記錄</p>`;
+            
+            // ⭐ 翻譯空狀態
+            if (typeof renderTranslations === 'function') {
+                renderTranslations(listEl);
+            }
         }
         
     } catch (error) {
         console.error('❌ 載入薪資列表失敗:', error);
         loadingEl.style.display = 'none';
-        listEl.innerHTML = `<p class="text-center text-red-400 py-8">${t('ERROR_LOAD_FAILED')}</p>`;
+        listEl.innerHTML = `<p class="text-center text-red-400 py-8" data-i18n="ERROR_LOAD_FAILED">載入失敗</p>`;
+        
+        // ⭐ 翻譯錯誤訊息
+        if (typeof renderTranslations === 'function') {
+            renderTranslations(listEl);
+        }
     }
 }
 
@@ -833,8 +890,8 @@ function getBankName(code) {
         "700": "中華郵政"
     };
     
-    return banks[code] || t('SALARY_UNKNOWN_BANK');
+    return banks[code] || (t('SALARY_UNKNOWN_BANK') || "未知銀行");
 }
 
-console.log('✅ 薪資管理系統（完整版 v2.0 - 多語言）JS 已載入');
-console.log('📋 包含：基本薪資 + 6項津貼 + 10項扣款 + 多語言支援');
+console.log('✅ 薪資管理系統（完整版 v2.2 - 修正多語言觸發）JS 已載入');
+console.log('📋 包含：基本薪資 + 6項津貼 + 10項扣款 + 完整多語言支援 + 自動翻譯觸發');

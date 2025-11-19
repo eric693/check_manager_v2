@@ -152,6 +152,7 @@
   "STATUS_REPAIR_REJECTED_OUT": "Absen Keluar Ditolak",
   "REAPPLY": "Ajukan Ulang",
 
+  "_comment3": "＿＿＿＿＿Manajemen Lembur＿＿＿＿",
   "TAB_OVERTIME": "Lembur",
   "OVERTIME_APPLY_TITLE": "Ajukan Lembur",
   "OVERTIME_APPLY_DESCRIPTION": "Isi informasi berikut untuk mengajukan lembur",
@@ -182,6 +183,7 @@
   "ERROR_SUBMIT_OVERTIME": "Gagal mengajukan permohonan lembur",
   "ERR_NO_PERMISSION": "Anda tidak memiliki izin untuk melakukan tindakan ini",
 
+  "_comment4": "＿＿＿＿＿Manajemen Cuti＿＿＿＿",
   "TAB_LEAVE": "Cuti",
   "LEAVE_BALANCE_TITLE": "Saldo Cuti",
   "LEAVE_BALANCE_DESCRIPTION": "Kuota cuti yang tersedia",
@@ -229,6 +231,7 @@
   "ENTER_REJECT_REASON": "Masukkan alasan penolakan:",
   "REVIEW_COMMENT_LABEL": "Komentar Tinjauan:",
 
+  "_comment5": "＿＿＿＿＿Ekspor Laporan＿＿＿＿",
   "EXPORT_ATTENDANCE_BTN": "Ekspor Laporan Kehadiran Bulan Ini",
   "EXPORT_LOADING": "Menyiapkan laporan...",
   "EXPORT_SUCCESS": "Laporan berhasil diekspor!",
@@ -239,6 +242,7 @@
   "ADMIN_EXPORT_MONTH_LABEL": "Pilih Bulan",
   "ADMIN_EXPORT_ALL_BTN": "Ekspor Laporan Semua Karyawan",
 
+  "_comment6": "＿＿＿＿＿Manajemen Shift＿＿＿＿",
   "TAB_SHIFT": "Shift",
   "SHIFT_TITLE": "Manajemen Shift",
   "SHIFT_DESCRIPTION": "Lihat dan kelola informasi shift karyawan",
@@ -256,18 +260,28 @@
   "LATE_PUNCH_WARNING": "Perhatian: Shift Anda dimulai pada {startTime}, dan Anda terlambat lebih dari 30 menit.",
   "NO_SHIFT_TODAY": "Tidak ada catatan shift hari ini",
 
+  "_comment7": "＿＿＿＿＿Manajemen Gaji (Lengkap)＿＿＿＿",
   "TAB_SALARY": "Gaji",
+  
   "SALARY_CURRENT_TITLE": "Gaji Bulan Ini",
   "SALARY_NOT_CALCULATED": "Gaji bulan ini belum dihitung",
   "SALARY_CONTACT_ADMIN": "Silakan hubungi administrator untuk perhitungan gaji",
+  
   "SALARY_GROSS": "Total Gaji Kotor",
   "SALARY_DEDUCTIONS": "Total Potongan",
   "SALARY_NET": "Gaji Bersih",
+  
   "SALARY_EARNINGS": "Pendapatan",
   "SALARY_BASE": "Gaji Pokok",
+  "SALARY_POSITION_ALLOWANCE": "Tunjangan Jabatan",
+  "SALARY_MEAL_ALLOWANCE": "Tunjangan Makan",
+  "SALARY_TRANSPORT_ALLOWANCE": "Tunjangan Transport",
+  "SALARY_ATTENDANCE_BONUS": "Bonus Kehadiran",
+  "SALARY_PERFORMANCE_BONUS": "Bonus Kinerja",
   "SALARY_WEEKDAY_OT": "Upah Lembur Hari Kerja",
   "SALARY_REST_OT": "Upah Lembur Hari Libur",
   "SALARY_HOLIDAY_OT": "Upah Lembur Hari Raya",
+  
   "SALARY_DEDUCTIONS_DETAIL": "Potongan",
   "SALARY_LABOR_INS": "BPJS Ketenagakerjaan",
   "SALARY_HEALTH_INS": "BPJS Kesehatan",
@@ -275,23 +289,54 @@
   "SALARY_PENSION": "Iuran Pensiun",
   "SALARY_TAX": "Pajak Penghasilan",
   "SALARY_LEAVE_DEDUCT": "Potongan Cuti",
+  "SALARY_WELFARE_FEE": "Biaya Kesejahteraan",
+  "SALARY_DORMITORY_FEE": "Biaya Asrama",
+  "SALARY_GROUP_INSURANCE": "Asuransi Kelompok",
+  "SALARY_OTHER_DEDUCTIONS": "Potongan Lainnya",
+  
   "SALARY_BANK_INFO": "Informasi Bank",
   "SALARY_BANK": "Bank",
   "SALARY_ACCOUNT": "Nomor Rekening",
+  "SALARY_UNKNOWN_BANK": "Bank Tidak Diketahui",
+  
   "SALARY_HISTORY_TITLE": "Riwayat Gaji",
   "SALARY_NO_HISTORY": "Belum ada riwayat",
+  "SALARY_STATUS_CALCULATED": "Sudah Dihitung",
+
   "SALARY_MANAGEMENT_TITLE": "Manajemen Gaji",
   "SALARY_MANAGEMENT_DESC": "Lihat dan kelola informasi gaji karyawan",
   "BTN_SALARY_SYSTEM": "Masuk ke Sistem Manajemen Gaji",
+  
   "SALARY_FEATURES_TITLE": "Fitur",
   "SALARY_FEATURE_1": "Dukungan untuk karyawan penuh waktu (gaji bulanan) dan paruh waktu (upah per jam)",
   "SALARY_FEATURE_2": "Perhitungan otomatis upah lembur dan potongan",
   "SALARY_FEATURE_3": "Pembuatan dan pengelolaan slip gaji",
   "SALARY_FEATURE_4": "Pelacakan detail upah per jam",
+  
   "SALARY_THIS_MONTH": "Gaji Bulan Ini",
   "WORK_HOURS": "Jam Kerja",
   "SALARY_CALCULATED": "Menghitung...",
   "HOURS_THIS_MONTH": "Statistik Bulan Ini",
+  
   "SALARY_REMINDER_TITLE": "Pengingat",
-  "SALARY_REMINDER_TEXT": "Sistem gaji secara otomatis mengintegrasikan catatan absensi, lembur, dan cuti Anda untuk perhitungan. Pastikan absen tepat waktu untuk memastikan perhitungan gaji yang akurat."
+  "SALARY_REMINDER_TEXT": "Sistem gaji secara otomatis mengintegrasikan catatan absensi, lembur, dan cuti Anda untuk perhitungan. Pastikan absen tepat waktu untuk memastikan perhitungan gaji yang akurat.",
+  
+  "SALARY_NO_RECORD_TITLE": "Tidak Ada Catatan Gaji",
+  "SALARY_NO_RECORD_TEXT": "Belum ada data gaji untuk bulan ini",
+  "SALARY_SELECT_MONTH": "Silakan pilih bulan pencarian",
+  "SALARY_FILL_REQUIRED": "Silakan isi bidang yang diperlukan (ID Karyawan, Nama, Gaji Pokok)",
+  "SALARY_SAVING": "Menyimpan konfigurasi gaji...",
+  "SALARY_SAVE_SUCCESS": "✅ Konfigurasi gaji berhasil disimpan",
+  "SALARY_SAVE_FAILED": "❌ Gagal menyimpan: {msg}",
+  "SALARY_CALC_MISSING_PARAMS": "Silakan isi ID Karyawan dan tahun-bulan perhitungan",
+  "SALARY_CALCULATING": "Menghitung gaji...",
+  "SALARY_CALC_SUCCESS": "✅ Perhitungan gaji selesai",
+  "SALARY_CALC_FAILED": "❌ Perhitungan gagal: {msg}",
+  "SALARY_CALC_RESULT_TITLE": "Hasil Perhitungan Gaji",
+  "SALARY_SAVE_CONFIRM": "Apakah Anda ingin menyimpan catatan gaji ini?",
+  "SALARY_RECORD_SAVING": "Menyimpan catatan gaji...",
+  "SALARY_RECORD_SAVE_SUCCESS": "✅ Catatan gaji berhasil disimpan",
+  "SALARY_RECORD_SAVE_FAILED": "❌ Gagal menyimpan catatan gaji: {msg}",
+  "ERROR_INIT_FAILED": "Inisialisasi gagal: {msg}",
+  "ERROR_LOAD_FAILED": "Gagal memuat"
 }

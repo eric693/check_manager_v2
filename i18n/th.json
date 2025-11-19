@@ -58,6 +58,7 @@
     "FOOTER_SPONSOR": "คลิกที่นี่เพื่อสนับสนุนโปรเจกต์นี้",
     "FOOTER_OPEN_SOURCE": "นี่คือโปรเจกต์โอเพนซอร์ส ยินดีต้อนรับการมีส่วนร่วม",
     "LOGIN_INFO": "กรุณาคลิกเข้าสู่ระบบเพื่อดำเนินการต่อ",
+    
     "_comment1": "＿＿＿＿＿ภาษาไทย - การแปล JavaScript ส่วนหน้าบ้าน＿＿＿＿",
     "LOADING": "⏳ กำลังดำเนินการ...",
     "ADJUST_BUTTON_TEXT": "เพิ่มเวลาลงเวลา",
@@ -84,6 +85,7 @@
     "ERROR_GEOLOCATION_TIMEOUT": "คำขอตำแหน่งหมดเวลา",
     "ERROR_GEOLOCATION_UNKNOWN": "เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ",
     "ERROR_BROWSER_NOT_SUPPORTED": "เบราว์เซอร์ของคุณไม่รองรับการระบุตำแหน่งทางภูมิศาสตร์",
+    
     "_comment2": "＿＿＿＿＿ภาษาไทย - การแปลส่วนหลังบ้าน＿＿＿＿",
     "FOOTER_NOTICE": "※ สถานะการเข้าสู่ระบบจะถูกบันทึกในเบราว์เซอร์ของคุณเป็นเวลา 1 วัน หากเปลี่ยนอุปกรณ์หรือล้างข้อมูลจะต้องเข้าสู่ระบบใหม่",
     "ADJUST_PUNCH_TITLE": "เพิ่มเวลาลงเวลา",
@@ -150,7 +152,7 @@
     "STATUS_REPAIR_REJECTED_OUT": "การลงเวลาออกงานแก้ไขถูกปฏิเสธ",
     "REAPPLY": "ยื่นคำขออีกครั้ง",
 
-
+    "_comment3": "＿＿＿＿＿การจัดการทำงานล่วงเวลา＿＿＿＿",
     "TAB_OVERTIME": "ทำงานล่วงเวลา",
     "OVERTIME_APPLY_TITLE": "ยื่นขอทำงานล่วงเวลา",
     "OVERTIME_APPLY_DESCRIPTION": "กรอกข้อมูลด้านล่างเพื่อยื่นขอทำงานล่วงเวลา",
@@ -181,6 +183,7 @@
     "ERROR_SUBMIT_OVERTIME": "ยื่นขอทำงานล่วงเวลาล้มเหลว",
     "ERR_NO_PERMISSION": "คุณไม่มีสิทธิ์ในการดำเนินการนี้",
 
+    "_comment4": "＿＿＿＿＿การจัดการลางาน＿＿＿＿",
     "TAB_LEAVE": "ลางาน",
     "LEAVE_BALANCE_TITLE": "ยอดวันลาคงเหลือ",
     "LEAVE_BALANCE_DESCRIPTION": "จำนวนวันลาที่ใช้ได้ของคุณ",
@@ -228,17 +231,18 @@
     "ENTER_REJECT_REASON": "กรุณากรอกเหตุผลในการปฏิเสธ：",
     "REVIEW_COMMENT_LABEL": "ความเห็นในการตรวจสอบ：",
 
+    "_comment5": "＿＿＿＿＿การส่งออกรายงาน＿＿＿＿",
     "EXPORT_ATTENDANCE_BTN": "ส่งออกรายงานการเข้างานประจำเดือน",
     "EXPORT_LOADING": "กำลังเตรียมรายงาน...",
     "EXPORT_SUCCESS": "ส่งออกรายงานสำเร็จ!",
     "EXPORT_FAILED": "ส่งออกล้มเหลว กรุณาลองใหม่ภายหลัง",
     "EXPORT_NO_DATA": "ไม่มีบันทึกการเข้างานในเดือนนี้",
-
     "ADMIN_EXPORT_TITLE": "ส่งออกรายงาน",
     "ADMIN_EXPORT_DESCRIPTION": "ส่งออกรายงานการเข้างานของพนักงานทั้งหมด",
     "ADMIN_EXPORT_MONTH_LABEL": "เลือกเดือน",
     "ADMIN_EXPORT_ALL_BTN": "ส่งออกรายงานพนักงานทั้งหมด",
 
+    "_comment6": "＿＿＿＿＿การจัดการตารางเวลาทำงาน＿＿＿＿",
     "TAB_SHIFT": "ตารางเวลาทำงาน",
     "SHIFT_TITLE": "จัดการตารางเวลาทำงาน",
     "SHIFT_DESCRIPTION": "ดูและจัดการข้อมูลตารางเวลาทำงานของพนักงาน",
@@ -251,24 +255,33 @@
     "SHIFT_TYPE_LABEL": "กะการทำงาน",
     "SHIFT_TIME_LABEL": "เวลา",
     "SHIFT_LOCATION_LABEL": "สถานที่",
-
     "SHIFT_INFO_NOTIFICATION": "ตารางเวลาทำงานวันนี้：{shiftType} ({startTime}-{endTime})",
     "EARLY_PUNCH_WARNING": "แจ้งเตือน：ตารางเวลาทำงานของคุณคือ {startTime} ปัจจุบันคุณลงเวลาเร็วกว่ากำหนดมากกว่า 30 นาที",
     "LATE_PUNCH_WARNING": "แจ้งเตือน：ตารางเวลาทำงานของคุณคือ {startTime} ปัจจุบันคุณมาสายมากกว่า 30 นาที",
     "NO_SHIFT_TODAY": "ไม่มีบันทึกตารางเวลาทำงานวันนี้",
 
+    "_comment7": "＿＿＿＿＿การจัดการเงินเดือน (ฉบับสมบูรณ์)＿＿＿＿",
     "TAB_SALARY": "เงินเดือน",
+    
     "SALARY_CURRENT_TITLE": "เงินเดือนประจำเดือนนี้",
     "SALARY_NOT_CALCULATED": "เงินเดือนประจำเดือนนี้ยังไม่ได้คำนวณ",
     "SALARY_CONTACT_ADMIN": "กรุณาติดต่อผู้ดูแลระบบเพื่อคำนวณเงินเดือน",
+    
     "SALARY_GROSS": "ยอดรวมที่ควรจ่าย",
     "SALARY_DEDUCTIONS": "ยอดรวมหักเงิน",
     "SALARY_NET": "จำนวนเงินที่จ่ายจริง",
+    
     "SALARY_EARNINGS": "รายการที่ควรจ่าย",
     "SALARY_BASE": "เงินเดือนพื้นฐาน",
+    "SALARY_POSITION_ALLOWANCE": "ค่าตำแหน่ง",
+    "SALARY_MEAL_ALLOWANCE": "ค่าอาหาร",
+    "SALARY_TRANSPORT_ALLOWANCE": "ค่าเดินทาง",
+    "SALARY_ATTENDANCE_BONUS": "โบนัสเข้างานเต็มวัน",
+    "SALARY_PERFORMANCE_BONUS": "โบนัสผลงาน",
     "SALARY_WEEKDAY_OT": "ค่าล่วงเวลาวันธรรมดา",
     "SALARY_REST_OT": "ค่าล่วงเวลาวันหยุด",
     "SALARY_HOLIDAY_OT": "ค่าล่วงเวลาวันหยุดนักขัตฤกษ์",
+    
     "SALARY_DEDUCTIONS_DETAIL": "รายการหักเงิน",
     "SALARY_LABOR_INS": "ค่าประกันแรงงาน",
     "SALARY_HEALTH_INS": "ค่าประกันสุขภาพ",
@@ -276,24 +289,54 @@
     "SALARY_PENSION": "เงินบำนาญสมทบ",
     "SALARY_TAX": "ภาษีเงินได้",
     "SALARY_LEAVE_DEDUCT": "หักเงินจากการลา",
+    "SALARY_WELFARE_FEE": "ค่าสวัสดิการ",
+    "SALARY_DORMITORY_FEE": "ค่าหอพัก",
+    "SALARY_GROUP_INSURANCE": "ประกันกลุ่ม",
+    "SALARY_OTHER_DEDUCTIONS": "หักเงินอื่นๆ",
+    
     "SALARY_BANK_INFO": "ข้อมูลการโอนเงิน",
     "SALARY_BANK": "ธนาคาร",
     "SALARY_ACCOUNT": "เลขที่บัญชี",
+    "SALARY_UNKNOWN_BANK": "ธนาคารไม่ทราบ",
+    
     "SALARY_HISTORY_TITLE": "ประวัติเงินเดือน",
     "SALARY_NO_HISTORY": "ยังไม่มีประวัติ",
+    "SALARY_STATUS_CALCULATED": "คำนวณแล้ว",
 
     "SALARY_MANAGEMENT_TITLE": "จัดการเงินเดือน",
     "SALARY_MANAGEMENT_DESC": "ดูและจัดการข้อมูลเงินเดือนของพนักงาน",
     "BTN_SALARY_SYSTEM": "เข้าสู่ระบบจัดการเงินเดือน",
+    
     "SALARY_FEATURES_TITLE": "คำอธิบายฟังก์ชัน",
     "SALARY_FEATURE_1": "รองรับพนักงานเต็มเวลา（เงินเดือนรายเดือน）และพนักงานพาร์ทไทม์（ค่าจ้างรายชั่วโมง）",
     "SALARY_FEATURE_2": "คำนวณค่าล่วงเวลา รายการหักเงินโดยอัตโนมัติ",
     "SALARY_FEATURE_3": "สร้างและจัดการใบเงินเดือน",
     "SALARY_FEATURE_4": "ติดตามรายละเอียดค่าจ้างรายชั่วโมง",
+    
     "SALARY_THIS_MONTH": "เงินเดือนประจำเดือนนี้",
     "WORK_HOURS": "ชั่วโมงทำงาน",
     "SALARY_CALCULATED": "ระบบกำลังคำนวณ...",
     "HOURS_THIS_MONTH": "สถิติประจำเดือนนี้",
+    
     "SALARY_REMINDER_TITLE": "เตือนใจ",
-    "SALARY_REMINDER_TEXT": "ระบบเงินเดือนจะรวมบันทึกการลงเวลา การทำงานล่วงเวลา และการลางานของคุณโดยอัตโนมัติเพื่อคำนวณ กรุณาตรวจสอบให้แน่ใจว่าคุณลงเวลาตรงเวลาเพื่อความแม่นยำในการคำนวณเงินเดือน"
+    "SALARY_REMINDER_TEXT": "ระบบเงินเดือนจะรวมบันทึกการลงเวลา การทำงานล่วงเวลา และการลางานของคุณโดยอัตโนมัติเพื่อคำนวณ กรุณาตรวจสอบให้แน่ใจว่าคุณลงเวลาตรงเวลาเพื่อความแม่นยำในการคำนวณเงินเดือน",
+    
+    "SALARY_NO_RECORD_TITLE": "ไม่มีบันทึกเงินเดือน",
+    "SALARY_NO_RECORD_TEXT": "ยังไม่มีข้อมูลเงินเดือนสำหรับเดือนนี้",
+    "SALARY_SELECT_MONTH": "กรุณาเลือกเดือนที่ต้องการค้นหา",
+    "SALARY_FILL_REQUIRED": "กรุณากรอกข้อมูลที่จำเป็น (รหัสพนักงาน, ชื่อ, เงินเดือนพื้นฐาน)",
+    "SALARY_SAVING": "กำลังบันทึกการตั้งค่าเงินเดือน...",
+    "SALARY_SAVE_SUCCESS": "✅ บันทึกการตั้งค่าเงินเดือนสำเร็จ",
+    "SALARY_SAVE_FAILED": "❌ บันทึกล้มเหลว: {msg}",
+    "SALARY_CALC_MISSING_PARAMS": "กรุณากรอกรหัสพนักงานและปี-เดือนในการคำนวณ",
+    "SALARY_CALCULATING": "กำลังคำนวณเงินเดือน...",
+    "SALARY_CALC_SUCCESS": "✅ คำนวณเงินเดือนเสร็จสิ้น",
+    "SALARY_CALC_FAILED": "❌ คำนวณล้มเหลว: {msg}",
+    "SALARY_CALC_RESULT_TITLE": "ผลการคำนวณเงินเดือน",
+    "SALARY_SAVE_CONFIRM": "คุณต้องการบันทึกบันทึกเงินเดือนนี้หรือไม่?",
+    "SALARY_RECORD_SAVING": "กำลังบันทึกบันทึกเงินเดือน...",
+    "SALARY_RECORD_SAVE_SUCCESS": "✅ บันทึกบันทึกเงินเดือนสำเร็จ",
+    "SALARY_RECORD_SAVE_FAILED": "❌ บันทึกบันทึกเงินเดือนล้มเหลว: {msg}",
+    "ERROR_INIT_FAILED": "เริ่มต้นล้มเหลว: {msg}",
+    "ERROR_LOAD_FAILED": "โหลดล้มเหลว"
 }
