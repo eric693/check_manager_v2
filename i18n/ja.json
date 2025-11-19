@@ -152,6 +152,7 @@
   "STATUS_REPAIR_REJECTED_OUT": "退勤打刻補正却下",
   "REAPPLY": "再申請",
 
+  "_comment3": "＿＿＿＿＿残業管理翻訳＿＿＿＿",
   "TAB_OVERTIME": "残業",
   "OVERTIME_APPLY_TITLE": "残業申請",
   "OVERTIME_APPLY_DESCRIPTION": "以下の情報を入力して残業申請を提出してください",
@@ -182,6 +183,7 @@
   "ERROR_SUBMIT_OVERTIME": "残業申請の提出に失敗しました",
   "ERR_NO_PERMISSION": "この操作を実行する権限がありません",
 
+  "_comment4": "＿＿＿＿＿休暇管理翻訳＿＿＿＿",
   "TAB_LEAVE": "休暇",
   "LEAVE_BALANCE_TITLE": "休暇残高",
   "LEAVE_BALANCE_DESCRIPTION": "利用可能な休暇日数",
@@ -229,6 +231,7 @@
   "ENTER_REJECT_REASON": "却下理由を入力してください：",
   "REVIEW_COMMENT_LABEL": "審査コメント：",
 
+  "_comment5": "＿＿＿＿＿レポート出力翻訳＿＿＿＿",
   "EXPORT_ATTENDANCE_BTN": "今月の勤怠レポートをエクスポート",
   "EXPORT_LOADING": "レポートを準備中...",
   "EXPORT_SUCCESS": "レポートのエクスポートに成功しました！",
@@ -239,6 +242,7 @@
   "ADMIN_EXPORT_MONTH_LABEL": "月を選択",
   "ADMIN_EXPORT_ALL_BTN": "全従業員レポートをエクスポート",
 
+  "_comment6": "＿＿＿＿＿シフト管理翻訳＿＿＿＿",
   "TAB_SHIFT": "シフト",
   "SHIFT_TITLE": "シフト管理",
   "SHIFT_DESCRIPTION": "従業員のシフト情報を確認・管理します",
@@ -256,18 +260,28 @@
   "LATE_PUNCH_WARNING": "注意：シフト開始時刻は {startTime} です。30分以上遅れています。",
   "NO_SHIFT_TODAY": "本日のシフト記録はありません",
 
+  "_comment7": "＿＿＿＿＿給与管理翻訳（完全版）＿＿＿＿",
   "TAB_SALARY": "給与",
+  
   "SALARY_CURRENT_TITLE": "今月の給与",
   "SALARY_NOT_CALCULATED": "今月の給与はまだ計算されていません",
   "SALARY_CONTACT_ADMIN": "給与計算については管理者にお問い合わせください",
+  
   "SALARY_GROSS": "総支給額",
   "SALARY_DEDUCTIONS": "控除総額",
   "SALARY_NET": "差引支給額",
+  
   "SALARY_EARNINGS": "支給項目",
   "SALARY_BASE": "基本給",
+  "SALARY_POSITION_ALLOWANCE": "役職手当",
+  "SALARY_MEAL_ALLOWANCE": "食事手当",
+  "SALARY_TRANSPORT_ALLOWANCE": "交通補助",
+  "SALARY_ATTENDANCE_BONUS": "皆勤手当",
+  "SALARY_PERFORMANCE_BONUS": "業績手当",
   "SALARY_WEEKDAY_OT": "平日残業手当",
   "SALARY_REST_OT": "休日残業手当",
   "SALARY_HOLIDAY_OT": "祝日残業手当",
+  
   "SALARY_DEDUCTIONS_DETAIL": "控除項目",
   "SALARY_LABOR_INS": "労働保険料",
   "SALARY_HEALTH_INS": "健康保険料",
@@ -275,23 +289,54 @@
   "SALARY_PENSION": "厚生年金保険料",
   "SALARY_TAX": "所得税",
   "SALARY_LEAVE_DEDUCT": "休暇控除",
+  "SALARY_WELFARE_FEE": "福利厚生費",
+  "SALARY_DORMITORY_FEE": "寮費",
+  "SALARY_GROUP_INSURANCE": "団体保険料",
+  "SALARY_OTHER_DEDUCTIONS": "その他控除",
+  
   "SALARY_BANK_INFO": "振込情報",
   "SALARY_BANK": "銀行",
   "SALARY_ACCOUNT": "口座番号",
+  "SALARY_UNKNOWN_BANK": "不明な銀行",
+  
   "SALARY_HISTORY_TITLE": "給与履歴",
   "SALARY_NO_HISTORY": "まだ履歴がありません",
+  "SALARY_STATUS_CALCULATED": "計算済み",
+
   "SALARY_MANAGEMENT_TITLE": "給与管理",
   "SALARY_MANAGEMENT_DESC": "従業員の給与情報を確認・管理します",
   "BTN_SALARY_SYSTEM": "給与管理システムに入る",
+  
   "SALARY_FEATURES_TITLE": "機能説明",
   "SALARY_FEATURE_1": "正社員（月給制）とアルバイト（時給制）に対応",
   "SALARY_FEATURE_2": "残業手当・控除項目を自動計算",
   "SALARY_FEATURE_3": "給与明細の生成と管理",
   "SALARY_FEATURE_4": "時給明細の追跡",
+  
   "SALARY_THIS_MONTH": "今月の給与",
   "WORK_HOURS": "勤務時間",
   "SALARY_CALCULATED": "計算中...",
   "HOURS_THIS_MONTH": "今月の統計",
+  
   "SALARY_REMINDER_TITLE": "お知らせ",
-  "SALARY_REMINDER_TEXT": "給与システムは、打刻・残業・休暇記録を自動的に統合して計算します。正確な給与計算のため、時間通りに打刻してください。"
+  "SALARY_REMINDER_TEXT": "給与システムは、打刻・残業・休暇記録を自動的に統合して計算します。正確な給与計算のため、時間通りに打刻してください。",
+  
+  "SALARY_NO_RECORD_TITLE": "給与記録なし",
+  "SALARY_NO_RECORD_TEXT": "この月の給与データはまだありません",
+  "SALARY_SELECT_MONTH": "照会月を選択してください",
+  "SALARY_FILL_REQUIRED": "必須項目（従業員ID、氏名、基本給）を入力してください",
+  "SALARY_SAVING": "給与設定を保存中...",
+  "SALARY_SAVE_SUCCESS": "✅ 給与設定が保存されました",
+  "SALARY_SAVE_FAILED": "❌ 保存失敗：{msg}",
+  "SALARY_CALC_MISSING_PARAMS": "従業員IDと計算年月を入力してください",
+  "SALARY_CALCULATING": "給与を計算中...",
+  "SALARY_CALC_SUCCESS": "✅ 給与計算完了",
+  "SALARY_CALC_FAILED": "❌ 計算失敗：{msg}",
+  "SALARY_CALC_RESULT_TITLE": "給与計算結果",
+  "SALARY_SAVE_CONFIRM": "この給与記録を保存しますか？",
+  "SALARY_RECORD_SAVING": "給与記録を保存中...",
+  "SALARY_RECORD_SAVE_SUCCESS": "✅ 給与記録が保存されました",
+  "SALARY_RECORD_SAVE_FAILED": "❌ 給与記録の保存失敗：{msg}",
+  "ERROR_INIT_FAILED": "初期化失敗：{msg}",
+  "ERROR_LOAD_FAILED": "読み込み失敗"
 }

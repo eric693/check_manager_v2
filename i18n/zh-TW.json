@@ -16,7 +16,7 @@
     "PUNCH_SECTION_TITLE": "打卡專區",
     "PUNCH_SECTION_DESCRIPTION": "請點擊下方按鈕進行上班或下班打卡。",
     "ABNORMAL_RECORDS_TITLE": "考勤紀錄",
-    "ABNORMAL_RECORDS_DESCRIPTION": "系統會自動偵測本月異常紀錄，您可以在此進行補打卡。",
+    "ABNORMAL_RECORDS_DESCRIPTION": "系統會自動偵測本月異常紀錄,您可以在此進行補打卡。",
     "RECORDS_LOADING": "正在載入紀錄...",
     "RECORDS_EMPTY_TITLE": "太棒了！",
     "RECORDS_EMPTY_MESSAGE": "本月目前沒有任何異常紀錄。",
@@ -42,7 +42,7 @@
     "REQUESTS_EMPTY_TITLE": "太棒了！",
     "REQUESTS_EMPTY_MESSAGE": "目前沒有任何待審核的請求。",
     "ADD_LOCATION_TITLE": "新增打卡地點",
-    "ADD_LOCATION_DESCRIPTION": "輸入地點名稱，並使用您的當前位置作為經緯度。",
+    "ADD_LOCATION_DESCRIPTION": "輸入地點名稱,並使用您的當前位置作為經緯度。",
     "LOCATION_NAME_LABEL": "地點名稱",
     "COORDINATES_LAT_LNG_LABEL": "經緯度 (Latitude / Longitude)",
     "LATITUDE_PLACEHOLDER": "緯度",
@@ -56,8 +56,9 @@
     "FOOTER_CREDITS_PREFIX": "由",
     "FOOTER_CREDITS_SUFFIX": "製作",
     "FOOTER_SPONSOR": "點此贊助此專案",
-    "FOOTER_OPEN_SOURCE": "這是一個開源專案，歡迎貢獻。",
+    "FOOTER_OPEN_SOURCE": "這是一個開源專案,歡迎貢獻。",
     "LOGIN_INFO": "請點擊登入以繼續。",
+    
     "_comment1": "＿＿＿＿＿以下是前端JS的翻譯＿＿＿＿",
     "LOADING": "⏳ 處理中...",
     "ADJUST_BUTTON_TEXT": "補打卡",
@@ -70,7 +71,7 @@
     "REQUEST_APPROVED": "請求已核准！",
     "REQUEST_REJECTED": "請求已拒絕！",
     "REVIEW_FAILED": "審核失敗：{msg}",
-    "REVIEW_NETWORK_ERROR": "審核失敗，請檢查網路。",
+    "REVIEW_NETWORK_ERROR": "審核失敗,請檢查網路。",
     "SELECT_DATETIME_LABEL":"選擇日期與時間：",
     "BTN_ADJUST_IN": "補上班打卡",
     "BTN_ADJUST_OUT": "補下班打卡",
@@ -84,6 +85,7 @@
     "ERROR_GEOLOCATION_TIMEOUT": "位置請求超時。",
     "ERROR_GEOLOCATION_UNKNOWN": "發生未知錯誤。",
     "ERROR_BROWSER_NOT_SUPPORTED": "您的瀏覽器不支援地理定位。",
+    
     "_comment2": "＿＿＿＿＿以下是後端的翻譯＿＿＿＿",
     "FOOTER_NOTICE": "※ 登入狀態保存在你的瀏覽器一天。若換裝置或清除資料需重新登入。",
     "ADJUST_PUNCH_TITLE": "補打卡",
@@ -110,9 +112,7 @@
     "PLEASE_RELOGIN": "請重新登入",
     "BTN_PUNCH_IN": "上班打卡",
     "BTN_PUNCH_OUT": "下班打卡",
-    
     "BTN_VIEW_ABNORMAL": "⚠️ 查看異常紀錄 👀",
-    
     "INVALID_ADJUST_TIME": "⚠️ 選擇的時間不合法",
     "SELECT_ADJUST_DATETIME": "請選擇補打卡日期時間",
     "LOGIN_SUCCESS": "✅ 登入成功！",
@@ -152,10 +152,8 @@
     "STATUS_REPAIR_REJECTED_OUT": "補下班被拒絕",
     "REAPPLY": "重新申請",
 
-
-
+    "_comment3": "＿＿＿＿＿加班管理翻譯＿＿＿＿",
     "TAB_OVERTIME": "加班",
-    
     "OVERTIME_APPLY_TITLE": "申請加班",
     "OVERTIME_APPLY_DESCRIPTION": "填寫以下資訊提交加班申請",
     "OVERTIME_DATE_LABEL": "加班日期",
@@ -165,48 +163,38 @@
     "OVERTIME_REASON_LABEL": "申請原因：",
     "OVERTIME_REASON_PLACEHOLDER": "請說明加班原因...",
     "OVERTIME_SUBMIT_BTN": "提交申請",
-    
     "OVERTIME_RECORDS_TITLE": "我的加班記錄",
     "OVERTIME_RECORDS_DESCRIPTION": "查看您的加班申請歷史記錄",
     "OVERTIME_NO_RECORDS": "目前沒有加班記錄",
-    
     "OVERTIME_STATUS_PENDING": "審核中",
     "OVERTIME_STATUS_APPROVED": "已核准",
     "OVERTIME_STATUS_REJECTED": "已拒絕",
-    
     "OVERTIME_REVIEW_COMMENT": "審核意見：",
-    
     "OVERTIME_PENDING_TITLE": "待審核加班申請",
     "OVERTIME_PENDING_DESCRIPTION": "審核員工提出的加班申請",
     "OVERTIME_NO_PENDING": "太棒了！目前沒有待審核的加班申請。",
-    
     "OVERTIME_FILL_ALL_FIELDS": "請填寫所有欄位",
     "OVERTIME_INVALID_HOURS": "加班時數必須大於 0",
     "OVERTIME_SUBMIT_SUCCESS": "✅ 加班申請已提交",
     "OVERTIME_APPROVED": "✅ 加班申請已核准",
     "OVERTIME_REJECTED": "❌ 加班申請已拒絕",
     "OVERTIME_REJECT_REASON_PROMPT": "請輸入拒絕原因（選填）",
-    
     "ERROR_LOAD_OVERTIME": "載入加班記錄失敗",
     "ERROR_SUBMIT_OVERTIME": "提交加班申請失敗",
     "ERR_NO_PERMISSION": "您沒有權限執行此操作",
 
-
+    "_comment4": "＿＿＿＿＿請假管理翻譯＿＿＿＿",
     "TAB_LEAVE": "請假",
-  
     "LEAVE_BALANCE_TITLE": "假期餘額",
     "LEAVE_BALANCE_DESCRIPTION": "您的可用假期額度",
-    
     "LEAVE_APPLY_TITLE": "申請請假",
     "LEAVE_APPLY_DESCRIPTION": "填寫以下資訊提交請假申請",
-    
     "LEAVE_TYPE_LABEL": "假別",
     "LEAVE_START_DATE_LABEL": "開始日期",
     "LEAVE_END_DATE_LABEL": "結束日期",
     "LEAVE_DAYS_LABEL": "請假天數",
     "LEAVE_REASON_LABEL": "請假原因:",
     "LEAVE_SUBMIT_BTN": "提交申請",
-    
     "ANNUAL_LEAVE": "特休假",
     "SICK_LEAVE": "病假",
     "PERSONAL_LEAVE": "事假",
@@ -216,75 +204,63 @@
     "PATERNITY_LEAVE": "陪產假",
     "FAMILY_CARE_LEAVE": "家庭照顧假",
     "MENSTRUAL_LEAVE": "生理假",
-    
     "DAYS": "天",
-    
     "LEAVE_RECORDS_TITLE": "我的請假記錄",
     "LEAVE_RECORDS_DESCRIPTION": "查看您的請假申請歷史記錄",
     "LEAVE_NO_RECORDS": "目前沒有請假記錄",
-    
     "PENDING": "待審核",
     "APPROVED": "已核准",
     "REJECTED": "已拒絕",
-    
     "LEAVE_PENDING_TITLE": "待審核請假申請",
     "LEAVE_PENDING_DESCRIPTION": "審核員工提出的請假申請",
     "LEAVE_NO_PENDING": "太棒了！目前沒有待審核的請假申請。",
-    
-    "LEAVE_SUBMIT_SUCCESS": "請假申請已提交，等待主管審核",
+    "LEAVE_SUBMIT_SUCCESS": "請假申請已提交,等待主管審核",
     "LEAVE_SUBMIT_FAILED": "請假申請失敗",
     "LEAVE_APPROVED": "請假申請已核准",
     "LEAVE_REJECTED": "請假申請已拒絕",
-    
     "ERROR_FETCH_LEAVE_BALANCE": "無法載入假期餘額",
     "ERR_INVALID_LEAVE_TYPE": "無效的假別",
-    "ERR_INSUFFICIENT_LEAVE_BALANCE": "{leaveType} 餘額不足（需要 {required} 天，剩餘 {available} 天）",
+    "ERR_INSUFFICIENT_LEAVE_BALANCE": "{leaveType} 餘額不足（需要 {required} 天,剩餘 {available} 天）",
     "ERR_MISSING_FIELDS": "請填寫所有必填欄位",
     "ERR_INVALID_DAYS": "請假天數必須大於 0",
     "ERR_END_DATE_BEFORE_START": "結束日期不能早於開始日期",
-    "ERR_NO_LEAVE_BALANCE": "找不到假期額度，請聯繫管理員",
+    "ERR_NO_LEAVE_BALANCE": "找不到假期額度,請聯繫管理員",
     "ERR_LEAVE_SYSTEM_NOT_INITIALIZED": "請假系統尚未初始化",
     "ERR_LEAVE_RECORDS_NOT_FOUND": "找不到請假記錄",
     "ERR_MISSING_REJECT_REASON": "拒絕請假時必須填寫原因",
-    
     "ENTER_REJECT_REASON": "請輸入拒絕原因：",
     "REVIEW_COMMENT_LABEL": "審核意見：",
 
+    "_comment5": "＿＿＿＿＿報表匯出翻譯＿＿＿＿",
     "EXPORT_ATTENDANCE_BTN": "匯出本月出勤報表",
     "EXPORT_LOADING": "正在準備報表...",
     "EXPORT_SUCCESS": "報表已成功匯出！",
-    "EXPORT_FAILED": "匯出失敗，請稍後再試",
+    "EXPORT_FAILED": "匯出失敗,請稍後再試",
     "EXPORT_NO_DATA": "本月沒有出勤記錄",
-
     "ADMIN_EXPORT_TITLE": "匯出報表",
     "ADMIN_EXPORT_DESCRIPTION": "匯出所有員工的出勤報表",
     "ADMIN_EXPORT_MONTH_LABEL": "選擇月份",
     "ADMIN_EXPORT_ALL_BTN": "匯出所有員工報表",
 
-
-
+    "_comment6": "＿＿＿＿＿排班管理翻譯＿＿＿＿",
     "TAB_SHIFT": "排班",
     "SHIFT_TITLE": "排班管理",
     "SHIFT_DESCRIPTION": "查看和管理員工排班資訊",
     "BTN_SHIFT_MANAGEMENT": "進入排班管理",
-    
     "SHIFT_TODAY_TITLE": "今日排班",
     "SHIFT_TODAY_EMPTY": "今日無排班",
     "SHIFT_WEEK_TITLE": "本週排班",
     "SHIFT_WEEK_EMPTY": "本週無排班",
     "SHIFT_LOADING": "載入中...",
-    
     "SHIFT_TYPE_LABEL": "班別",
     "SHIFT_TIME_LABEL": "時間",
     "SHIFT_LOCATION_LABEL": "地點",
-
     "SHIFT_INFO_NOTIFICATION": "今日排班：{shiftType} ({startTime}-{endTime})",
-    "EARLY_PUNCH_WARNING": "注意：您的排班時間是 {startTime}，目前提前超過 30 分鐘打卡。",
-    "LATE_PUNCH_WARNING": "注意：您的排班時間是 {startTime}，目前已遲到超過 30 分鐘。",
+    "EARLY_PUNCH_WARNING": "注意：您的排班時間是 {startTime},目前提前超過 30 分鐘打卡。",
+    "LATE_PUNCH_WARNING": "注意：您的排班時間是 {startTime},目前已遲到超過 30 分鐘。",
     "NO_SHIFT_TODAY": "今日無排班記錄",
 
-
-
+    "_comment7": "＿＿＿＿＿薪資管理翻譯（完整版）＿＿＿＿",
     "TAB_SALARY": "薪資",
     
     "SALARY_CURRENT_TITLE": "本月薪資",
@@ -297,6 +273,11 @@
     
     "SALARY_EARNINGS": "應發項目",
     "SALARY_BASE": "基本薪資",
+    "SALARY_POSITION_ALLOWANCE": "職務加給",
+    "SALARY_MEAL_ALLOWANCE": "伙食費",
+    "SALARY_TRANSPORT_ALLOWANCE": "交通補助",
+    "SALARY_ATTENDANCE_BONUS": "全勤獎金",
+    "SALARY_PERFORMANCE_BONUS": "績效獎金",
     "SALARY_WEEKDAY_OT": "平日加班費",
     "SALARY_REST_OT": "休息日加班費",
     "SALARY_HOLIDAY_OT": "國定假日加班費",
@@ -308,27 +289,54 @@
     "SALARY_PENSION": "勞退自提",
     "SALARY_TAX": "所得稅",
     "SALARY_LEAVE_DEDUCT": "請假扣款",
+    "SALARY_WELFARE_FEE": "福利金",
+    "SALARY_DORMITORY_FEE": "宿舍費用",
+    "SALARY_GROUP_INSURANCE": "團保費用",
+    "SALARY_OTHER_DEDUCTIONS": "其他扣款",
     
     "SALARY_BANK_INFO": "匯款資訊",
     "SALARY_BANK": "銀行",
     "SALARY_ACCOUNT": "帳號",
+    "SALARY_UNKNOWN_BANK": "未知銀行",
     
     "SALARY_HISTORY_TITLE": "薪資歷史",
     "SALARY_NO_HISTORY": "尚無歷史記錄",
+    "SALARY_STATUS_CALCULATED": "已計算",
 
     "SALARY_MANAGEMENT_TITLE": "薪資管理",
     "SALARY_MANAGEMENT_DESC": "查看和管理員工薪資資訊",
     "BTN_SALARY_SYSTEM": "進入薪資管理系統",
+    
     "SALARY_FEATURES_TITLE": "功能說明",
     "SALARY_FEATURE_1": "支援全職員工（月薪制）與兼職員工（時薪制）",
     "SALARY_FEATURE_2": "自動計算加班費、扣款項目",
     "SALARY_FEATURE_3": "薪資單生成和管理",
     "SALARY_FEATURE_4": "時薪明細追蹤",
+    
     "SALARY_THIS_MONTH": "本月薪資",
     "WORK_HOURS": "工作時數",
     "SALARY_CALCULATED": "系統計算中...",
     "HOURS_THIS_MONTH": "本月統計",
+    
     "SALARY_REMINDER_TITLE": "溫馨提示",
-    "SALARY_REMINDER_TEXT": "薪資系統會自動整合您的打卡、加班和請假記錄進行計算。請確保按時打卡以確保薪資計算準確。"
-
+    "SALARY_REMINDER_TEXT": "薪資系統會自動整合您的打卡、加班和請假記錄進行計算。請確保按時打卡以確保薪資計算準確。",
+    
+    "SALARY_NO_RECORD_TITLE": "尚無薪資記錄",
+    "SALARY_NO_RECORD_TEXT": "此月份還沒有薪資資料",
+    "SALARY_SELECT_MONTH": "請選擇查詢月份",
+    "SALARY_FILL_REQUIRED": "請填寫必填欄位（員工ID、姓名、基本薪資）",
+    "SALARY_SAVING": "正在儲存薪資設定...",
+    "SALARY_SAVE_SUCCESS": "✅ 薪資設定已儲存",
+    "SALARY_SAVE_FAILED": "❌ 儲存失敗：{msg}",
+    "SALARY_CALC_MISSING_PARAMS": "請填寫員工ID和計算年月",
+    "SALARY_CALCULATING": "正在計算薪資...",
+    "SALARY_CALC_SUCCESS": "✅ 薪資計算完成",
+    "SALARY_CALC_FAILED": "❌ 計算失敗：{msg}",
+    "SALARY_CALC_RESULT_TITLE": "薪資計算結果",
+    "SALARY_SAVE_CONFIRM": "是否要儲存此薪資記錄？",
+    "SALARY_RECORD_SAVING": "正在儲存薪資記錄...",
+    "SALARY_RECORD_SAVE_SUCCESS": "✅ 薪資記錄已儲存",
+    "SALARY_RECORD_SAVE_FAILED": "❌ 儲存薪資記錄失敗：{msg}",
+    "ERROR_INIT_FAILED": "初始化失敗：{msg}",
+    "ERROR_LOAD_FAILED": "載入失敗"
 }

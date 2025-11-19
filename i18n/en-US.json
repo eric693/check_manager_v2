@@ -152,6 +152,7 @@
   "STATUS_REPAIR_REJECTED_OUT": "Punch Out Rejected",
   "REAPPLY": "Reapply",
 
+  "_comment3": "＿＿＿＿＿Overtime Management Translations＿＿＿＿",
   "TAB_OVERTIME": "Overtime",
   "OVERTIME_APPLY_TITLE": "Apply for Overtime",
   "OVERTIME_APPLY_DESCRIPTION": "Fill in the following information to submit an overtime application",
@@ -182,6 +183,7 @@
   "ERROR_SUBMIT_OVERTIME": "Failed to submit overtime application",
   "ERR_NO_PERMISSION": "You do not have permission to perform this action",
 
+  "_comment4": "＿＿＿＿＿Leave Management Translations＿＿＿＿",
   "TAB_LEAVE": "Leave",
   "LEAVE_BALANCE_TITLE": "Leave Balance",
   "LEAVE_BALANCE_DESCRIPTION": "Your available leave quota",
@@ -229,6 +231,7 @@
   "ENTER_REJECT_REASON": "Enter rejection reason:",
   "REVIEW_COMMENT_LABEL": "Review Comment:",
 
+  "_comment5": "＿＿＿＿＿Report Export Translations＿＿＿＿",
   "EXPORT_ATTENDANCE_BTN": "Export This Month's Attendance Report",
   "EXPORT_LOADING": "Preparing report...",
   "EXPORT_SUCCESS": "Report exported successfully!",
@@ -239,6 +242,7 @@
   "ADMIN_EXPORT_MONTH_LABEL": "Select Month",
   "ADMIN_EXPORT_ALL_BTN": "Export All Employee Reports",
 
+  "_comment6": "＿＿＿＿＿Shift Management Translations＿＿＿＿",
   "TAB_SHIFT": "Shift",
   "SHIFT_TITLE": "Shift Management",
   "SHIFT_DESCRIPTION": "View and manage employee shift information",
@@ -256,18 +260,28 @@
   "LATE_PUNCH_WARNING": "Notice: Your shift starts at {startTime}, and you are over 30 minutes late.",
   "NO_SHIFT_TODAY": "No shift record for today",
 
+  "_comment7": "＿＿＿＿＿Salary Management Translations (Complete)＿＿＿＿",
   "TAB_SALARY": "Salary",
+  
   "SALARY_CURRENT_TITLE": "This Month's Salary",
   "SALARY_NOT_CALCULATED": "This month's salary has not been calculated yet",
   "SALARY_CONTACT_ADMIN": "Please contact administrator for salary calculation",
+  
   "SALARY_GROSS": "Gross Salary",
   "SALARY_DEDUCTIONS": "Total Deductions",
   "SALARY_NET": "Net Salary",
+  
   "SALARY_EARNINGS": "Earnings",
   "SALARY_BASE": "Base Salary",
+  "SALARY_POSITION_ALLOWANCE": "Position Allowance",
+  "SALARY_MEAL_ALLOWANCE": "Meal Allowance",
+  "SALARY_TRANSPORT_ALLOWANCE": "Transportation Allowance",
+  "SALARY_ATTENDANCE_BONUS": "Attendance Bonus",
+  "SALARY_PERFORMANCE_BONUS": "Performance Bonus",
   "SALARY_WEEKDAY_OT": "Weekday Overtime Pay",
   "SALARY_REST_OT": "Rest Day Overtime Pay",
   "SALARY_HOLIDAY_OT": "Holiday Overtime Pay",
+  
   "SALARY_DEDUCTIONS_DETAIL": "Deductions",
   "SALARY_LABOR_INS": "Labor Insurance",
   "SALARY_HEALTH_INS": "Health Insurance",
@@ -275,23 +289,54 @@
   "SALARY_PENSION": "Pension Contribution",
   "SALARY_TAX": "Income Tax",
   "SALARY_LEAVE_DEDUCT": "Leave Deduction",
+  "SALARY_WELFARE_FEE": "Welfare Fee",
+  "SALARY_DORMITORY_FEE": "Dormitory Fee",
+  "SALARY_GROUP_INSURANCE": "Group Insurance",
+  "SALARY_OTHER_DEDUCTIONS": "Other Deductions",
+  
   "SALARY_BANK_INFO": "Bank Information",
   "SALARY_BANK": "Bank",
   "SALARY_ACCOUNT": "Account Number",
+  "SALARY_UNKNOWN_BANK": "Unknown Bank",
+  
   "SALARY_HISTORY_TITLE": "Salary History",
   "SALARY_NO_HISTORY": "No history records yet",
+  "SALARY_STATUS_CALCULATED": "Calculated",
+
   "SALARY_MANAGEMENT_TITLE": "Salary Management",
   "SALARY_MANAGEMENT_DESC": "View and manage employee salary information",
   "BTN_SALARY_SYSTEM": "Go to Salary Management System",
+  
   "SALARY_FEATURES_TITLE": "Features",
   "SALARY_FEATURE_1": "Support for full-time employees (monthly salary) and part-time employees (hourly wage)",
   "SALARY_FEATURE_2": "Automatically calculate overtime pay and deductions",
   "SALARY_FEATURE_3": "Payslip generation and management",
   "SALARY_FEATURE_4": "Hourly wage details tracking",
+  
   "SALARY_THIS_MONTH": "This Month's Salary",
   "WORK_HOURS": "Work Hours",
   "SALARY_CALCULATED": "Calculating...",
   "HOURS_THIS_MONTH": "This Month's Statistics",
+  
   "SALARY_REMINDER_TITLE": "Reminder",
-  "SALARY_REMINDER_TEXT": "The salary system automatically integrates your punch records, overtime, and leave records for calculation. Please ensure timely punching to ensure accurate salary calculation."
+  "SALARY_REMINDER_TEXT": "The salary system automatically integrates your punch records, overtime, and leave records for calculation. Please ensure timely punching to ensure accurate salary calculation.",
+  
+  "SALARY_NO_RECORD_TITLE": "No Salary Record",
+  "SALARY_NO_RECORD_TEXT": "No salary data for this month yet",
+  "SALARY_SELECT_MONTH": "Please select query month",
+  "SALARY_FILL_REQUIRED": "Please fill in required fields (Employee ID, Name, Base Salary)",
+  "SALARY_SAVING": "Saving salary configuration...",
+  "SALARY_SAVE_SUCCESS": "✅ Salary configuration saved",
+  "SALARY_SAVE_FAILED": "❌ Save failed: {msg}",
+  "SALARY_CALC_MISSING_PARAMS": "Please fill in Employee ID and calculation year-month",
+  "SALARY_CALCULATING": "Calculating salary...",
+  "SALARY_CALC_SUCCESS": "✅ Salary calculation complete",
+  "SALARY_CALC_FAILED": "❌ Calculation failed: {msg}",
+  "SALARY_CALC_RESULT_TITLE": "Salary Calculation Result",
+  "SALARY_SAVE_CONFIRM": "Do you want to save this salary record?",
+  "SALARY_RECORD_SAVING": "Saving salary record...",
+  "SALARY_RECORD_SAVE_SUCCESS": "✅ Salary record saved",
+  "SALARY_RECORD_SAVE_FAILED": "❌ Failed to save salary record: {msg}",
+  "ERROR_INIT_FAILED": "Initialization failed: {msg}",
+  "ERROR_LOAD_FAILED": "Load failed"
 }
