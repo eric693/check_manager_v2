@@ -2,7 +2,7 @@
 
 const API_CONFIG = {
   // 正式環境的 API URL
-  apiUrl: "https://script.google.com/macros/s/AKfycbxpu8CcMNxMD-C5IclcRN8OsE-jDMcVBQwh_G1p3pm2lw5YMT2W9AHk3mtPO0Lo6Wdh/exec",
+  apiUrl: "https://script.google.com/macros/s/AKfycbwQeSXcQUO4zgazZb9yxq6EvA1mcmtZTWpuv-LWTApIirGOG_7OGTIYx3beLjGNKz8fgQ/exec",
   
   // 新增回呼網址
   redirectUrl: "https://eric693.github.io/jiman/"
