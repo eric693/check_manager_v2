@@ -426,11 +426,17 @@ async function handleSalaryConfigSubmit(e) {
     const paymentDay = safeGetValue('config-payment-day') || '5';
     const note = safeGetValue('config-note');
     
-    if (!employeeId || !employeeName || !baseSalary || parseFloat(baseSalary) <= 0) {
+    if (!employeeId || !employeeName || !baseSalary) {
         showNotification(t('SALARY_FILL_REQUIRED') || '請填寫必填欄位', 'error');
         return;
     }
-    
+
+    const salaryValue = parseFloat(baseSalary);
+    if (isNaN(salaryValue) || salaryValue <= 0) {
+        showNotification(t('SALARY_INVALID_AMOUNT') || '請輸入有效的薪資金額', 'error');
+        return;
+    }
+        
     try {
         showNotification(t('SALARY_SAVING') || '正在儲存...', 'info');
         

@@ -796,8 +796,8 @@
                             <div class="form-group">
                                 <label class="form-label required" data-i18n="SALARY_BASE">基本薪資</label>
                                 <input type="number" id="config-base-salary" class="form-input" 
-                                       placeholder="27,470" min="0" step="1" required>
-                                <span class="form-hint warning">⚠️ <strong>2025年基本工資</strong>: 月薪 28,590 元 | 時薪 190 元</span>
+                                       placeholder="輸入金額" step="1" required>
+                                <span class="form-hint">請輸入基本薪資金額</span>
                             </div>
                         </div>
                     </div>
@@ -1141,7 +1141,7 @@
                         <label class="form-label required" data-i18n="SALARY_HOURLY_RATE_LABEL">時薪</label>
                         <input type="number" id="hourly-rate" class="form-input" 
                                placeholder="190" min="190" step="1">
-                        <span class="form-hint" data-i18n="SALARY_MIN_HOURLY">最低時薪: 190元</span>
+                        <span class="form-hint">請輸入時薪金額</span>
                     </div>
 
                     <div class="form-group">
@@ -1549,11 +1549,6 @@
             
             if (!employeeId || !yearMonth) {
                 showNotification('❌ 請選擇員工和計算年月', 'error');
-                return;
-            }
-            
-            if (hourlyRate < 190) {
-                showNotification('❌ 時薪不得低於190元', 'error');
                 return;
             }
             
