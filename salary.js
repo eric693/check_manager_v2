@@ -899,5 +899,169 @@ function getBankName(code) {
     return banks[code] || (t('SALARY_UNKNOWN_BANK') || "未知銀行");
 }
 
+// 薪資儲存診斷工具 - 在瀏覽器 Console 執行
+
+/**
+ * 🔍 診斷薪資儲存問題
+ */
+async function diagnoseSalarySave() {
+    console.log('🔍 開始診斷薪資儲存問題');
+    console.log('═══════════════════════════════════════');
+    
+    // 步驟 1: 檢查必填欄位
+    console.log('📋 步驟 1: 檢查表單必填欄位');
+    
+    const requiredFields = {
+        'config-employee-id': '員工ID',
+        'config-employee-name': '員工姓名',
+        'config-base-salary': '基本薪資'
+    };
+    
+    let hasError = false;
+    
+    Object.keys(requiredFields).forEach(id => {
+        const el = document.getElementById(id);
+        const value = el ? el.value : null;
+        
+        if (!value || value.trim() === '') {
+            console.error(`❌ ${requiredFields[id]} (${id}): 空的！`);
+            hasError = true;
+        } else {
+            console.log(`✅ ${requiredFields[id]}: ${value}`);
+        }
+    });
+    
+    if (hasError) {
+        console.log('');
+        console.log('❌ 診斷結果: 有必填欄位未填寫');
+        console.log('📝 請先選擇員工並填寫基本薪資');
+        return;
+    }
+    
+    console.log('');
+    console.log('✅ 必填欄位檢查通過');
+    console.log('');
+    
+    // 步驟 2: 檢查基本薪資數值
+    console.log('💰 步驟 2: 檢查基本薪資數值');
+    
+    const baseSalary = document.getElementById('config-base-salary');
+    const value = parseFloat(baseSalary.value);
+    
+    if (isNaN(value)) {
+        console.error('❌ 基本薪資不是數字');
+        return;
+    }
+    
+    if (value <= 0) {
+        console.error('❌ 基本薪資必須大於 0');
+        return;
+    }
+    
+    console.log(`✅ 基本薪資: ${value} 元`);
+    console.log('');
+    
+    // 步驟 3: 測試儲存（使用最小資料）
+    console.log('🧪 步驟 3: 測試儲存（最小資料集）');
+    
+    const testData = {
+        employeeId: document.getElementById('config-employee-id').value.trim(),
+        employeeName: document.getElementById('config-employee-name').value.trim(),
+        baseSalary: value,
+        salaryType: '月薪',
+        employeeType: '正職'
+    };
+    
+    console.log('📤 準備送出資料:');
+    console.log(JSON.stringify(testData, null, 2));
+    console.log('');
+    
+    try {
+        console.log('⏳ 正在呼叫 API...');
+        
+        const res = await callApifetch('setEmployeeSalaryTW', testData);
+        
+        console.log('');
+        console.log('📥 API 回應:');
+        console.log(JSON.stringify(res, null, 2));
+        console.log('');
+        
+        if (res.ok || res.success) {
+            console.log('🎉🎉🎉 儲存成功！');
+            console.log('');
+            console.log('✅ 診斷結果: 系統正常運作');
+        } else {
+            console.error('❌ 儲存失敗');
+            console.error('');
+            console.error('📋 失敗原因分析:');
+            console.error('   錯誤訊息:', res.msg || res.message);
+            console.error('');
+            
+            // 分析錯誤類型
+            const errorMsg = (res.msg || res.message || '').toLowerCase();
+            
+            if (errorMsg.includes('缺少') || errorMsg.includes('必填')) {
+                console.error('🔍 問題類型: 缺少必填欄位');
+                console.error('💡 解決方法: 檢查是否選擇了員工');
+            } else if (errorMsg.includes('27470') || errorMsg.includes('最低')) {
+                console.error('🔍 問題類型: 最低薪資限制');
+                console.error('💡 解決方法: 後端還有薪資驗證，需要修改 SalaryManagement.gs');
+            } else if (errorMsg.includes('權限') || errorMsg.includes('permission')) {
+                console.error('🔍 問題類型: 權限不足');
+                console.error('💡 解決方法: 請用管理員帳號登入');
+            } else {
+                console.error('🔍 問題類型: 未知錯誤');
+                console.error('💡 建議: 查看後端 Log');
+            }
+        }
+        
+    } catch (error) {
+        console.error('');
+        console.error('❌❌❌ 發生例外錯誤');
+        console.error('錯誤訊息:', error.message);
+        console.error('錯誤堆疊:', error.stack);
+    }
+    
+    console.log('');
+    console.log('═══════════════════════════════════════');
+}
+
+/**
+ * 🧪 快速測試儲存（固定資料）
+ */
+async function quickTestSave() {
+    console.log('🧪 快速測試儲存（固定資料）');
+    
+    const testData = {
+        employeeId: 'QUICK_TEST',
+        employeeName: '快速測試員工',
+        baseSalary: 10000,
+        salaryType: '月薪',
+        employeeType: '正職'
+    };
+    
+    console.log('📤 測試資料:', testData);
+    
+    const res = await callApifetch('setEmployeeSalaryTW', testData);
+    
+    console.log('📥 結果:', res);
+    
+    if (res.ok || res.success) {
+        console.log('✅ 快速測試成功！系統正常運作');
+    } else {
+        console.error('❌ 快速測試失敗');
+        console.error('錯誤:', res.msg || res.message);
+    }
+}
+
+// 自動執行診斷
+console.log('');
+console.log('💡 薪資儲存診斷工具已載入');
+console.log('');
+console.log('📋 可用指令:');
+console.log('   diagnoseSalarySave()  - 完整診斷（需先填寫表單）');
+console.log('   quickTestSave()       - 快速測試（使用固定資料）');
+console.log('');
+
 console.log('✅ 薪資管理系統（完整版 v2.2 - 修正多語言觸發）JS 已載入');
 console.log('📋 包含：基本薪資 + 6項津貼 + 10項扣款 + 完整多語言支援 + 自動翻譯觸發');
