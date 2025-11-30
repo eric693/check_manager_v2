@@ -357,6 +357,9 @@ async function handleSalaryConfigSubmit(e) {
     // 基本資訊
     const employeeId = safeGetValue('config-employee-id');
     const employeeName = safeGetValue('config-employee-name');
+    const idNumber = safeGetValue('config-id-number');           // ⭐ 加入
+    const employeeType = safeGetValue('config-employee-type');   // ⭐ 加入
+    const salaryType = safeGetValue('config-salary-type');       // ⭐ 加入
     const baseSalary = safeGetValue('config-base-salary');
     
     // ⭐ 固定津貼（6項）
@@ -382,55 +385,68 @@ async function handleSalaryConfigSubmit(e) {
     const otherDeductions = safeGetValue('config-other-deductions') || '0';
     
     // 其他資訊
-    const idNumber = safeGetValue('config-id-number');
-    const employeeType = safeGetValue('config-employee-type');
-    const salaryType = safeGetValue('config-salary-type');
     const bankCode = safeGetValue('config-bank-code');
     const bankAccount = safeGetValue('config-bank-account');
     const hireDate = safeGetValue('config-hire-date');
     const paymentDay = safeGetValue('config-payment-day') || '5';
     const note = safeGetValue('config-note');
     
+    // 驗證
     if (!employeeId || !employeeName || !baseSalary || parseFloat(baseSalary) <= 0) {
         showNotification('❌ 請填寫必填欄位', 'error');
+        return;
+    }
+    
+    if (!employeeType || !salaryType) {
+        showNotification('❌ 請選擇員工類型和薪資類型', 'error');
         return;
     }
     
     try {
         showNotification('⏳ 正在儲存薪資設定...', 'info');
         
+        // ⭐ 重新排序參數，與後端 Sheet 欄位順序一致
         const queryString = 
+            // 基本資訊 (6個參數)
             `employeeId=${encodeURIComponent(employeeId)}` +
             `&employeeName=${encodeURIComponent(employeeName)}` +
+            `&idNumber=${encodeURIComponent(idNumber)}` +                    // ⭐ 新增
+            `&employeeType=${encodeURIComponent(employeeType)}` +            // ⭐ 新增
+            `&salaryType=${encodeURIComponent(salaryType)}` +                // ⭐ 新增
             `&baseSalary=${encodeURIComponent(baseSalary)}` +
-            // ⭐ 固定津貼
+            
+            // 固定津貼 (6個參數)
             `&positionAllowance=${encodeURIComponent(positionAllowance)}` +
             `&mealAllowance=${encodeURIComponent(mealAllowance)}` +
             `&transportAllowance=${encodeURIComponent(transportAllowance)}` +
             `&attendanceBonus=${encodeURIComponent(attendanceBonus)}` +
             `&performanceBonus=${encodeURIComponent(performanceBonus)}` +
             `&otherAllowances=${encodeURIComponent(otherAllowances)}` +
-            // 法定扣款
+            
+            // 銀行資訊 (4個參數)
+            `&bankCode=${encodeURIComponent(bankCode)}` +
+            `&bankAccount=${encodeURIComponent(bankAccount)}` +
+            `&hireDate=${encodeURIComponent(hireDate)}` +
+            `&paymentDay=${encodeURIComponent(paymentDay)}` +
+            
+            // 法定扣款 (6個參數)
+            `&pensionSelfRate=${encodeURIComponent(pensionSelfRate)}` +
             `&laborFee=${encodeURIComponent(laborFee)}` +
             `&healthFee=${encodeURIComponent(healthFee)}` +
             `&employmentFee=${encodeURIComponent(employmentFee)}` +
             `&pensionSelf=${encodeURIComponent(pensionSelf)}` +
             `&incomeTax=${encodeURIComponent(incomeTax)}` +
-            `&pensionSelfRate=${encodeURIComponent(pensionSelfRate)}` +
-            // ⭐ 其他扣款
+            
+            // 其他扣款 (4個參數)
             `&welfareFee=${encodeURIComponent(welfareFee)}` +
             `&dormitoryFee=${encodeURIComponent(dormitoryFee)}` +
             `&groupInsurance=${encodeURIComponent(groupInsurance)}` +
             `&otherDeductions=${encodeURIComponent(otherDeductions)}` +
-            // 其他資訊
-            `&idNumber=${encodeURIComponent(idNumber)}` +
-            `&employeeType=${encodeURIComponent(employeeType)}` +
-            `&salaryType=${encodeURIComponent(salaryType)}` +
-            `&bankCode=${encodeURIComponent(bankCode)}` +
-            `&bankAccount=${encodeURIComponent(bankAccount)}` +
-            `&hireDate=${encodeURIComponent(hireDate)}` +
-            `&paymentDay=${encodeURIComponent(paymentDay)}` +
+            
+            // 備註
             `&note=${encodeURIComponent(note)}`;
+        
+        console.log('📤 送出參數:', queryString);
         
         const res = await callApifetch(`setEmployeeSalaryTW&${queryString}`);
         
@@ -476,7 +492,6 @@ async function handleSalaryConfigSubmit(e) {
         showNotification('❌ 設定失敗，請稍後再試', 'error');
     }
 }
-
 /**
  * ✅ 處理薪資計算
  */
