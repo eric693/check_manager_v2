@@ -429,43 +429,99 @@ function testShiftAPI() {
 // ==================== 薪資系統 Handler 函數 ====================
 
 /**
- * 處理設定員工薪資
+ * ✅ 處理設定員工薪資（完整版 - 含所有 27 個參數）
+ * 
+ * 修正內容：
+ * 1. 補齊 6 個固定津貼參數
+ * 2. 補齊 4 個其他扣款參數
+ * 3. 加入詳細的 Logger 輸出
  */
 function handleSetEmployeeSalaryTW(params) {
   try {
+    Logger.log('═══════════════════════════════════════');
+    Logger.log('💰 開始設定員工薪資（完整版）');
+    Logger.log('═══════════════════════════════════════');
+    
+    // Session 驗證
     if (!params.token || !validateSession(params.token)) {
+      Logger.log('❌ Session 驗證失敗');
       return { ok: false, msg: "未授權或 session 已過期" };
     }
     
+    Logger.log('✅ Session 驗證成功');
+    
+    // ⭐⭐⭐ 完整的 salaryData 物件（27 個參數）
     const salaryData = {
+      // ========== 基本資訊 (6 個參數: A-F) ==========
       employeeId: params.employeeId,
       employeeName: params.employeeName,
       idNumber: params.idNumber,
       employeeType: params.employeeType,
       salaryType: params.salaryType,
       baseSalary: parseFloat(params.baseSalary) || 0,
+      
+      // ========== ⭐ 固定津貼 (6 個參數: G-L) ==========
+      positionAllowance: parseFloat(params.positionAllowance) || 0,      // G: 職務加給
+      mealAllowance: parseFloat(params.mealAllowance) || 0,              // H: 伙食費
+      transportAllowance: parseFloat(params.transportAllowance) || 0,    // I: 交通補助
+      attendanceBonus: parseFloat(params.attendanceBonus) || 0,          // J: 全勤獎金
+      performanceBonus: parseFloat(params.performanceBonus) || 0,        // K: 績效獎金
+      otherAllowances: parseFloat(params.otherAllowances) || 0,          // L: 其他津貼
+      
+      // ========== 銀行資訊 (4 個參數: M-P) ==========
       bankCode: params.bankCode,
       bankAccount: params.bankAccount,
       hireDate: params.hireDate,
       paymentDay: params.paymentDay,
+      
+      // ========== 法定扣款 (6 個參數: Q-V) ==========
       pensionSelfRate: parseFloat(params.pensionSelfRate) || 0,
       laborFee: parseFloat(params.laborFee) || 0,
       healthFee: parseFloat(params.healthFee) || 0,
       employmentFee: parseFloat(params.employmentFee) || 0,
       pensionSelf: parseFloat(params.pensionSelf) || 0,
       incomeTax: parseFloat(params.incomeTax) || 0,
+      
+      // ========== ⭐ 其他扣款 (4 個參數: W-Z) ==========
+      welfareFee: parseFloat(params.welfareFee) || 0,                    // W: 福利金扣款
+      dormitoryFee: parseFloat(params.dormitoryFee) || 0,                // X: 宿舍費用
+      groupInsurance: parseFloat(params.groupInsurance) || 0,            // Y: 團保費用
+      otherDeductions: parseFloat(params.otherDeductions) || 0,          // Z: 其他扣款
+      
+      // ========== 備註 (1 個參數: AB) ==========
       note: params.note
     };
     
-    if (salaryData.salaryType === '月薪' && salaryData.baseSalary < 27470) {
-      return { ok: false, msg: "月薪不得低於27,470元" };
+    Logger.log('📋 salaryData 組裝完成（共 27 個參數）');
+    Logger.log('   - 基本薪資: ' + salaryData.baseSalary);
+    Logger.log('   - 職務加給: ' + salaryData.positionAllowance);
+    Logger.log('   - 伙食費: ' + salaryData.mealAllowance);
+    Logger.log('   - 交通補助: ' + salaryData.transportAllowance);
+    Logger.log('   - 全勤獎金: ' + salaryData.attendanceBonus);
+    Logger.log('   - 績效獎金: ' + salaryData.performanceBonus);
+    Logger.log('   - 其他津貼: ' + salaryData.otherAllowances);
+    Logger.log('   - 福利金: ' + salaryData.welfareFee);
+    Logger.log('   - 宿舍費用: ' + salaryData.dormitoryFee);
+    Logger.log('   - 團保費用: ' + salaryData.groupInsurance);
+    Logger.log('   - 其他扣款: ' + salaryData.otherDeductions);
+    
+    // 驗證最低薪資
+    if (salaryData.salaryType === '月薪' && salaryData.baseSalary < 28590) {
+      return { ok: false, msg: "月薪不得低於 28,590 元（2025年基本工資）" };
     }
     
-    if (salaryData.salaryType === '時薪' && salaryData.baseSalary < 183) {
-      return { ok: false, msg: "時薪不得低於183元" };
+    if (salaryData.salaryType === '時薪' && salaryData.baseSalary < 190) {
+      return { ok: false, msg: "時薪不得低於 190 元（2025年基本工資）" };
     }
     
+    Logger.log('💾 開始儲存薪資設定...');
+    
+    // 呼叫核心函數
     const result = setEmployeeSalaryTW(salaryData);
+    
+    Logger.log('📤 儲存結果: ' + (result.success ? '成功' : '失敗'));
+    Logger.log('   訊息: ' + result.message);
+    Logger.log('═══════════════════════════════════════');
     
     return { 
       ok: result.success, 
@@ -474,7 +530,8 @@ function handleSetEmployeeSalaryTW(params) {
     };
     
   } catch (error) {
-    Logger.log('handleSetEmployeeSalaryTW 錯誤: ' + error);
+    Logger.log('❌ handleSetEmployeeSalaryTW 錯誤: ' + error);
+    Logger.log('❌ 錯誤堆疊: ' + error.stack);
     return { ok: false, msg: error.message };
   }
 }

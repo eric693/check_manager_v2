@@ -471,13 +471,16 @@ function handleExportShifts(params) {
 
 // ==================== 薪資系統 Handler 函數（完全修正版 v4.0）====================
 
+// Handlers.gs - handleSetEmployeeSalaryTW 完全修正版 v5.0
+// ⭐ 修正：補齊所有津貼和扣款參數
+
 /**
- * ✅ 處理設定員工薪資
+ * ✅ 處理設定員工薪資（完全修正版 v5.0）
  */
 function handleSetEmployeeSalaryTW(params) {
   try {
     Logger.log('═══════════════════════════════════════');
-    Logger.log('💰 開始設定員工薪資');
+    Logger.log('💰 開始設定員工薪資（完整版 v5.0）');
     Logger.log('═══════════════════════════════════════');
     
     if (!params || Object.keys(params).length === 0) {
@@ -490,6 +493,12 @@ function handleSetEmployeeSalaryTW(params) {
     Logger.log('   - employeeId: ' + (params.employeeId || '缺少'));
     Logger.log('   - employeeName: ' + (params.employeeName || '缺少'));
     Logger.log('   - baseSalary: ' + (params.baseSalary || '缺少'));
+    Logger.log('   - positionAllowance: ' + (params.positionAllowance || '0'));
+    Logger.log('   - mealAllowance: ' + (params.mealAllowance || '0'));
+    Logger.log('   - transportAllowance: ' + (params.transportAllowance || '0'));
+    Logger.log('   - attendanceBonus: ' + (params.attendanceBonus || '0'));
+    Logger.log('   - performanceBonus: ' + (params.performanceBonus || '0'));
+    Logger.log('   - otherAllowances: ' + (params.otherAllowances || '0'));
     
     if (!params.token) {
       Logger.log('❌ 缺少認證 token');
@@ -516,44 +525,86 @@ function handleSetEmployeeSalaryTW(params) {
       return isNaN(num) ? 0 : num;
     };
     
+    // ⭐⭐⭐ 關鍵修正：補齊所有津貼和扣款參數
     const salaryData = {
+      // 基本資訊 (6 項)
       employeeId: safeString(params.employeeId),
       employeeName: safeString(params.employeeName),
       idNumber: safeString(params.idNumber),
       employeeType: safeString(params.employeeType) || '正職',
       salaryType: safeString(params.salaryType) || '月薪',
       baseSalary: safeNumber(params.baseSalary),
+      
+      // ⭐ 固定津貼（6 項）- 這是缺少的部分！
+      positionAllowance: safeNumber(params.positionAllowance),
+      mealAllowance: safeNumber(params.mealAllowance),
+      transportAllowance: safeNumber(params.transportAllowance),
+      attendanceBonus: safeNumber(params.attendanceBonus),
+      performanceBonus: safeNumber(params.performanceBonus),
+      otherAllowances: safeNumber(params.otherAllowances),
+      
+      // 銀行資訊 (4 項)
       bankCode: safeString(params.bankCode),
       bankAccount: safeString(params.bankAccount),
       hireDate: params.hireDate || new Date(),
       paymentDay: safeString(params.paymentDay) || '5',
+      
+      // 法定扣款 (6 項)
       pensionSelfRate: safeNumber(params.pensionSelfRate),
       laborFee: safeNumber(params.laborFee),
       healthFee: safeNumber(params.healthFee),
       employmentFee: safeNumber(params.employmentFee),
       pensionSelf: safeNumber(params.pensionSelf),
       incomeTax: safeNumber(params.incomeTax),
+      
+      // ⭐ 其他扣款（4 項）
+      welfareFee: safeNumber(params.welfareFee),
+      dormitoryFee: safeNumber(params.dormitoryFee),
+      groupInsurance: safeNumber(params.groupInsurance),
+      otherDeductions: safeNumber(params.otherDeductions),
+      
+      // 備註
       note: safeString(params.note)
     };
     
+    Logger.log('');
+    Logger.log('📋 組裝後的 salaryData:');
+    Logger.log('   基本薪資: ' + salaryData.baseSalary);
+    Logger.log('   職務加給: ' + salaryData.positionAllowance);
+    Logger.log('   伙食費: ' + salaryData.mealAllowance);
+    Logger.log('   交通補助: ' + salaryData.transportAllowance);
+    Logger.log('   全勤獎金: ' + salaryData.attendanceBonus);
+    Logger.log('   績效獎金: ' + salaryData.performanceBonus);
+    Logger.log('   其他津貼: ' + salaryData.otherAllowances);
+    Logger.log('   銀行代碼: ' + salaryData.bankCode);
+    Logger.log('   銀行帳號: ' + salaryData.bankAccount);
+    Logger.log('   福利金: ' + salaryData.welfareFee);
+    Logger.log('   宿舍費用: ' + salaryData.dormitoryFee);
+    Logger.log('   團保費用: ' + salaryData.groupInsurance);
+    Logger.log('   其他扣款: ' + salaryData.otherDeductions);
+    
+    // 驗證必填欄位
     if (!salaryData.employeeId || !salaryData.employeeName || salaryData.baseSalary <= 0) {
       Logger.log('❌ 必填欄位驗證失敗');
       return { ok: false, msg: "必填欄位不完整或無效" };
     }
     
-    if (salaryData.salaryType === '月薪' && salaryData.baseSalary < 27470) {
-      return { ok: false, msg: "月薪不得低於27,470元" };
+    // 驗證最低薪資
+    if (salaryData.salaryType === '月薪' && salaryData.baseSalary < 28590) {
+      return { ok: false, msg: "月薪不得低於 28,590 元（2025年基本工資）" };
     }
     
-    if (salaryData.salaryType === '時薪' && salaryData.baseSalary < 183) {
-      return { ok: false, msg: "時薪不得低於183元" };
+    if (salaryData.salaryType === '時薪' && salaryData.baseSalary < 190) {
+      return { ok: false, msg: "時薪不得低於 190 元（2025年基本工資）" };
     }
     
     Logger.log('💾 開始儲存薪資設定...');
     
+    // 呼叫核心函數
     const result = setEmployeeSalaryTW(salaryData);
     
     Logger.log('📤 儲存結果: ' + result.success);
+    Logger.log('   訊息: ' + result.message);
     Logger.log('═══════════════════════════════════════');
     
     return { 
@@ -566,6 +617,7 @@ function handleSetEmployeeSalaryTW(params) {
     Logger.log('❌❌❌ 發生嚴重錯誤');
     Logger.log('錯誤訊息: ' + error.message);
     Logger.log('錯誤堆疊: ' + error.stack);
+    Logger.log('═══════════════════════════════════════');
     
     return { 
       ok: false, 
@@ -575,6 +627,398 @@ function handleSetEmployeeSalaryTW(params) {
   }
 }
 
+/**
+ * 🧪 測試函數
+ */
+function testHandleSetEmployeeSalaryTW() {
+  Logger.log('🧪 測試 handleSetEmployeeSalaryTW（完整版）');
+  Logger.log('');
+  
+  const testParams = {
+    token: '3577f5c0-7e0a-4082-9593-d84fb9ba1db1',  // ⚠️ 替換成有效的 token
+    employeeId: 'Uffac21d92d99e3404b9228fd8c251e2a',
+    employeeName: '洪培瑜Eric',
+    idNumber: 'A173123222',
+    employeeType: '正職',
+    salaryType: '月薪',
+    baseSalary: '50000',
+    
+    // ⭐ 固定津貼
+    positionAllowance: '10',
+    mealAllowance: '10',
+    transportAllowance: '0',
+    attendanceBonus: '16',
+    performanceBonus: '0',
+    otherAllowances: '56',
+    
+    // 銀行資訊
+    bankCode: '052',
+    bankAccount: '1111',
+    hireDate: '',
+    paymentDay: '5',
+    
+    // 法定扣款
+    pensionSelfRate: '0',
+    laborFee: '1053',
+    healthFee: '710',
+    employmentFee: '92',
+    pensionSelf: '0',
+    incomeTax: '800',
+    
+    // ⭐ 其他扣款
+    welfareFee: '40',
+    dormitoryFee: '0',
+    groupInsurance: '0',
+    otherDeductions: '36',
+    
+    // 備註
+    note: '測試完整版薪資設定'
+  };
+  
+  Logger.log('📥 測試參數已準備');
+  Logger.log('');
+  
+  const result = handleSetEmployeeSalaryTW(testParams);
+  
+  Logger.log('');
+  Logger.log('📤 測試結果:');
+  Logger.log(JSON.stringify(result, null, 2));
+  
+  if (result.ok) {
+    Logger.log('');
+    Logger.log('✅✅✅ 測試成功！');
+    Logger.log('   請檢查 Google Sheet 中的資料是否正確');
+  } else {
+    Logger.log('');
+    Logger.log('❌ 測試失敗');
+    Logger.log('   原因: ' + result.msg);
+  }
+}
+
+/**
+ * 🔍 檢查 salaryData 物件是否正確組裝
+ */
+function testCheckSalaryDataObject() {
+  Logger.log('═══════════════════════════════════════');
+  Logger.log('🔍 檢查 salaryData 物件組裝');
+  Logger.log('═══════════════════════════════════════');
+  Logger.log('');
+  
+  const params = {
+    employeeId: 'TEST123',
+    employeeName: '測試員工',
+    baseSalary: '60000',
+    positionAllowance: '10',
+    mealAllowance: '10',
+    otherAllowances: '47',
+    dormitoryFee: '67',
+    otherDeductions: '90'
+  };
+  
+  const safeString = (value) => {
+    if (value === null || value === undefined) return '';
+    return String(value).trim();
+  };
+  
+  const safeNumber = (value) => {
+    if (value === null || value === undefined) return 0;
+    const num = parseFloat(value);
+    return isNaN(num) ? 0 : num;
+  };
+  
+  const salaryData = {
+    employeeId: safeString(params.employeeId),
+    employeeName: safeString(params.employeeName),
+    baseSalary: safeNumber(params.baseSalary),
+    positionAllowance: safeNumber(params.positionAllowance),
+    mealAllowance: safeNumber(params.mealAllowance),
+    otherAllowances: safeNumber(params.otherAllowances),
+    dormitoryFee: safeNumber(params.dormitoryFee),
+    otherDeductions: safeNumber(params.otherDeductions)
+  };
+  
+  Logger.log('📊 salaryData 物件內容:');
+  Logger.log('   employeeId: ' + salaryData.employeeId);
+  Logger.log('   employeeName: ' + salaryData.employeeName);
+  Logger.log('   baseSalary: ' + salaryData.baseSalary + ' (型別: ' + typeof salaryData.baseSalary + ')');
+  Logger.log('   positionAllowance: ' + salaryData.positionAllowance + ' ⭐ (型別: ' + typeof salaryData.positionAllowance + ')');
+  Logger.log('   mealAllowance: ' + salaryData.mealAllowance + ' ⭐ (型別: ' + typeof salaryData.mealAllowance + ')');
+  Logger.log('   otherAllowances: ' + salaryData.otherAllowances + ' ⭐ (型別: ' + typeof salaryData.otherAllowances + ')');
+  Logger.log('   dormitoryFee: ' + salaryData.dormitoryFee + ' ⭐ (型別: ' + typeof salaryData.dormitoryFee + ')');
+  Logger.log('   otherDeductions: ' + salaryData.otherDeductions + ' ⭐ (型別: ' + typeof salaryData.otherDeductions + ')');
+  Logger.log('');
+  
+  if (salaryData.positionAllowance === 10 && 
+      salaryData.mealAllowance === 10 && 
+      salaryData.otherAllowances === 47) {
+    Logger.log('✅✅✅ salaryData 物件組裝正確！');
+  } else {
+    Logger.log('❌ salaryData 物件組裝有問題');
+  }
+  
+  Logger.log('═══════════════════════════════════════');
+}
+
+// 診斷測試腳本 - 完整版
+
+/**
+ * 🧪 測試 handleSetEmployeeSalaryTW 是否正確接收參數
+ */
+function testDiagnoseSalaryParams() {
+  Logger.log('═══════════════════════════════════════');
+  Logger.log('🧪 診斷測試：薪資參數接收（完整版 v2.0）');
+  Logger.log('═══════════════════════════════════════');
+  Logger.log('');
+  
+  // ⭐⭐⭐ 模擬前端送出的參數（完整 29 個參數）
+  const testParams = {
+    token: '3577f5c0-7e0a-4082-9593-d84fb9ba1db1',  // ⚠️ 替換成你的有效 token
+    
+    // 基本資訊 (6 個)
+    employeeId: 'Uffac21d92d99e3404b9228fd8c251e2a',
+    employeeName: '張鈺宸(傻傻)',
+    idNumber: 'A173123222',
+    employeeType: '正職',
+    salaryType: '月薪',
+    baseSalary: '60000',
+    
+    // ⭐ 固定津貼 (6 個) - 這是測試重點！
+    positionAllowance: '10',
+    mealAllowance: '10',
+    transportAllowance: '0',
+    attendanceBonus: '0',
+    performanceBonus: '0',
+    otherAllowances: '47',
+    
+    // 銀行資訊 (4 個)
+    bankCode: '822',
+    bankAccount: '22214',
+    hireDate: '',
+    paymentDay: '5',
+    
+    // 法定扣款 (6 個)
+    pensionSelfRate: '0',
+    laborFee: '1053',
+    healthFee: '710',
+    employmentFee: '92',
+    pensionSelf: '0',
+    incomeTax: '1300',
+    
+    // ⭐ 其他扣款 (4 個) - 這也是測試重點！
+    welfareFee: '0',
+    dormitoryFee: '67',
+    groupInsurance: '0',
+    otherDeductions: '90',
+    
+    // 備註 (1 個)
+    note: '診斷測試 v2.0'
+  };
+  
+  Logger.log('📥 測試參數 (共 29 個):');
+  Logger.log('');
+  Logger.log('【基本資訊 - 6 個】');
+  Logger.log('   1. employeeId: ' + testParams.employeeId);
+  Logger.log('   2. employeeName: ' + testParams.employeeName);
+  Logger.log('   3. idNumber: ' + testParams.idNumber);
+  Logger.log('   4. employeeType: ' + testParams.employeeType);
+  Logger.log('   5. salaryType: ' + testParams.salaryType);
+  Logger.log('   6. baseSalary: ' + testParams.baseSalary);
+  Logger.log('');
+  Logger.log('【固定津貼 - 6 個】⭐⭐⭐');
+  Logger.log('   7. positionAllowance: ' + testParams.positionAllowance + ' ⭐');
+  Logger.log('   8. mealAllowance: ' + testParams.mealAllowance + ' ⭐');
+  Logger.log('   9. transportAllowance: ' + testParams.transportAllowance);
+  Logger.log('  10. attendanceBonus: ' + testParams.attendanceBonus);
+  Logger.log('  11. performanceBonus: ' + testParams.performanceBonus);
+  Logger.log('  12. otherAllowances: ' + testParams.otherAllowances + ' ⭐');
+  Logger.log('');
+  Logger.log('【銀行資訊 - 4 個】');
+  Logger.log('  13. bankCode: ' + testParams.bankCode);
+  Logger.log('  14. bankAccount: ' + testParams.bankAccount);
+  Logger.log('  15. hireDate: ' + (testParams.hireDate || '(空)'));
+  Logger.log('  16. paymentDay: ' + testParams.paymentDay);
+  Logger.log('');
+  Logger.log('【法定扣款 - 6 個】');
+  Logger.log('  17. pensionSelfRate: ' + testParams.pensionSelfRate);
+  Logger.log('  18. laborFee: ' + testParams.laborFee);
+  Logger.log('  19. healthFee: ' + testParams.healthFee);
+  Logger.log('  20. employmentFee: ' + testParams.employmentFee);
+  Logger.log('  21. pensionSelf: ' + testParams.pensionSelf);
+  Logger.log('  22. incomeTax: ' + testParams.incomeTax);
+  Logger.log('');
+  Logger.log('【其他扣款 - 4 個】⭐⭐⭐');
+  Logger.log('  23. welfareFee: ' + testParams.welfareFee);
+  Logger.log('  24. dormitoryFee: ' + testParams.dormitoryFee + ' ⭐');
+  Logger.log('  25. groupInsurance: ' + testParams.groupInsurance);
+  Logger.log('  26. otherDeductions: ' + testParams.otherDeductions + ' ⭐');
+  Logger.log('');
+  Logger.log('【備註 - 1 個】');
+  Logger.log('  27. note: ' + testParams.note);
+  Logger.log('');
+  
+  // ⭐ 呼叫 Handler 函數
+  Logger.log('📡 開始呼叫 handleSetEmployeeSalaryTW()');
+  Logger.log('');
+  
+  const result = handleSetEmployeeSalaryTW(testParams);
+  
+  Logger.log('');
+  Logger.log('📤 Handler 返回結果:');
+  Logger.log('   ok: ' + result.ok);
+  Logger.log('   msg: ' + result.msg);
+  Logger.log('');
+  
+  if (result.ok) {
+    Logger.log('✅ Handler 執行成功');
+    Logger.log('');
+    Logger.log('🔍 請檢查 Google Sheet「員工薪資設定」:');
+    Logger.log('   G 欄（職務加給）應該是: 10');
+    Logger.log('   H 欄（伙食費）應該是: 10');
+    Logger.log('   L 欄（其他津貼）應該是: 47');
+    Logger.log('   X 欄（宿舍費用）應該是: 67');
+    Logger.log('   Z 欄（其他扣款）應該是: 90');
+    Logger.log('');
+    Logger.log('🔍 如果以上欄位仍然是 0，則問題在於 setEmployeeSalaryTW()');
+  } else {
+    Logger.log('❌ Handler 執行失敗');
+    Logger.log('   錯誤訊息: ' + result.msg);
+  }
+  
+  Logger.log('═══════════════════════════════════════');
+}
+
+/**
+ * 🔍 檢查 salaryData 物件是否正確組裝
+ */
+function testCheckSalaryDataObject() {
+  Logger.log('═══════════════════════════════════════');
+  Logger.log('🔍 檢查 salaryData 物件組裝');
+  Logger.log('═══════════════════════════════════════');
+  Logger.log('');
+  
+  const params = {
+    employeeId: 'TEST123',
+    employeeName: '測試員工',
+    baseSalary: '60000',
+    positionAllowance: '10',
+    mealAllowance: '10',
+    otherAllowances: '47',
+    dormitoryFee: '67',
+    otherDeductions: '90'
+  };
+  
+  const safeString = (value) => {
+    if (value === null || value === undefined) return '';
+    return String(value).trim();
+  };
+  
+  const safeNumber = (value) => {
+    if (value === null || value === undefined) return 0;
+    const num = parseFloat(value);
+    return isNaN(num) ? 0 : num;
+  };
+  
+  const salaryData = {
+    employeeId: safeString(params.employeeId),
+    employeeName: safeString(params.employeeName),
+    baseSalary: safeNumber(params.baseSalary),
+    positionAllowance: safeNumber(params.positionAllowance),
+    mealAllowance: safeNumber(params.mealAllowance),
+    otherAllowances: safeNumber(params.otherAllowances),
+    dormitoryFee: safeNumber(params.dormitoryFee),
+    otherDeductions: safeNumber(params.otherDeductions)
+  };
+  
+  Logger.log('📊 salaryData 物件內容:');
+  Logger.log('   employeeId: ' + salaryData.employeeId);
+  Logger.log('   employeeName: ' + salaryData.employeeName);
+  Logger.log('   baseSalary: ' + salaryData.baseSalary + ' (型別: ' + typeof salaryData.baseSalary + ')');
+  Logger.log('   positionAllowance: ' + salaryData.positionAllowance + ' ⭐ (型別: ' + typeof salaryData.positionAllowance + ')');
+  Logger.log('   mealAllowance: ' + salaryData.mealAllowance + ' ⭐ (型別: ' + typeof salaryData.mealAllowance + ')');
+  Logger.log('   otherAllowances: ' + salaryData.otherAllowances + ' ⭐ (型別: ' + typeof salaryData.otherAllowances + ')');
+  Logger.log('   dormitoryFee: ' + salaryData.dormitoryFee + ' ⭐ (型別: ' + typeof salaryData.dormitoryFee + ')');
+  Logger.log('   otherDeductions: ' + salaryData.otherDeductions + ' ⭐ (型別: ' + typeof salaryData.otherDeductions + ')');
+  Logger.log('');
+  
+  if (salaryData.positionAllowance === 10 && 
+      salaryData.mealAllowance === 10 && 
+      salaryData.otherAllowances === 47) {
+    Logger.log('✅✅✅ salaryData 物件組裝正確！');
+  } else {
+    Logger.log('❌ salaryData 物件組裝有問題');
+  }
+  
+  Logger.log('═══════════════════════════════════════');
+}
+
+/**
+ * 📋 檢查 Sheet 欄位結構
+ */
+function testCheckSheetStructure() {
+  Logger.log('═══════════════════════════════════════');
+  Logger.log('📋 檢查 Sheet 欄位結構');
+  Logger.log('═══════════════════════════════════════');
+  Logger.log('');
+  
+  const sheet = getEmployeeSalarySheet();
+  const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  
+  Logger.log('📊 Sheet 欄位總數: ' + headers.length);
+  Logger.log('');
+  Logger.log('📋 完整欄位列表:');
+  
+  headers.forEach((header, index) => {
+    const column = String.fromCharCode(65 + index);
+    Logger.log(`   ${column} (${index + 1}): ${header}`);
+  });
+  
+  Logger.log('');
+  Logger.log('🔍 關鍵欄位檢查:');
+  Logger.log('   G 欄 (7):  ' + headers[6] + (headers[6] === '職務加給' ? ' ✅' : ' ❌'));
+  Logger.log('   H 欄 (8):  ' + headers[7] + (headers[7] === '伙食費' ? ' ✅' : ' ❌'));
+  Logger.log('   I 欄 (9):  ' + headers[8] + (headers[8] === '交通補助' ? ' ✅' : ' ❌'));
+  Logger.log('   L 欄 (12): ' + headers[11] + (headers[11] === '其他津貼' ? ' ✅' : ' ❌'));
+  Logger.log('   M 欄 (13): ' + headers[12] + (headers[12] === '銀行代碼' ? ' ✅' : ' ❌'));
+  Logger.log('   N 欄 (14): ' + headers[13] + (headers[13] === '銀行帳號' ? ' ✅' : ' ❌'));
+  Logger.log('   X 欄 (24): ' + headers[23] + (headers[23] === '宿舍費用' ? ' ✅' : ' ❌'));
+  Logger.log('   Z 欄 (26): ' + headers[25] + (headers[25] === '其他扣款' ? ' ✅' : ' ❌'));
+  
+  Logger.log('═══════════════════════════════════════');
+}
+/**
+ * 📋 檢查 Sheet 欄位結構
+ */
+function testCheckSheetStructure() {
+  Logger.log('═══════════════════════════════════════');
+  Logger.log('📋 檢查 Sheet 欄位結構');
+  Logger.log('═══════════════════════════════════════');
+  Logger.log('');
+  
+  const sheet = getEmployeeSalarySheet();
+  const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  
+  Logger.log('📊 Sheet 欄位總數: ' + headers.length);
+  Logger.log('');
+  Logger.log('📋 完整欄位列表:');
+  
+  headers.forEach((header, index) => {
+    const column = String.fromCharCode(65 + index);
+    Logger.log(`   ${column} (${index + 1}): ${header}`);
+  });
+  
+  Logger.log('');
+  Logger.log('🔍 關鍵欄位檢查:');
+  Logger.log('   G 欄 (7):  ' + headers[6] + (headers[6] === '職務加給' ? ' ✅' : ' ❌'));
+  Logger.log('   H 欄 (8):  ' + headers[7] + (headers[7] === '伙食費' ? ' ✅' : ' ❌'));
+  Logger.log('   I 欄 (9):  ' + headers[8] + (headers[8] === '交通補助' ? ' ✅' : ' ❌'));
+  Logger.log('   L 欄 (12): ' + headers[11] + (headers[11] === '其他津貼' ? ' ✅' : ' ❌'));
+  Logger.log('   M 欄 (13): ' + headers[12] + (headers[12] === '銀行代碼' ? ' ✅' : ' ❌'));
+  Logger.log('   N 欄 (14): ' + headers[13] + (headers[13] === '銀行帳號' ? ' ✅' : ' ❌'));
+  Logger.log('   X 欄 (24): ' + headers[23] + (headers[23] === '宿舍費用' ? ' ✅' : ' ❌'));
+  Logger.log('   Z 欄 (26): ' + headers[25] + (headers[25] === '其他扣款' ? ' ✅' : ' ❌'));
+  
+  Logger.log('═══════════════════════════════════════');
+}
 /**
  * ✅ 處理取得員工薪資
  */
