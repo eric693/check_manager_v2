@@ -1254,7 +1254,7 @@ function displayMonthCalendar(shifts) {
             <div class="calendar-day ${otherMonthClass} ${todayClass} ${hasShiftsClass}">
                 <div class="day-number">${dayNumber}</div>
                 <div class="day-shifts">
-                    ${dayShifts.slice(0, 3).map(shift => {
+                    ${dayShifts.slice(0, 10).map(shift => {
                         const startTime = formatTimeOnly(shift.startTime);
                         const endTime = formatTimeOnly(shift.endTime);
                         return `
