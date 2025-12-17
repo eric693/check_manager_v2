@@ -52,7 +52,7 @@
     "API_TEST_TITLE": "API 測試區",
     "API_TEST_DESCRIPTION": "點擊下方按鈕以測試新的 API 功能。",
     "API_TEST_BTN": "測試 API",
-    "FOOTER_VERSION": "出勤管家 v4.2.2",
+    "FOOTER_VERSION": "出勤管家 v4.2.4",
     "FOOTER_CREDITS_PREFIX": "由",
     "FOOTER_CREDITS_SUFFIX": "製作",
     "FOOTER_SPONSOR": "點此贊助此專案",
@@ -187,6 +187,11 @@
     "OVERTIME_REJECTED": "❌ 加班申請已拒絕",
     "OVERTIME_REJECT_REASON_PROMPT": "請輸入拒絕原因（選填）",
     
+    "OVERTIME_APPROVED_INFO": "✅ 已核准加班",
+    "OVERTIME_HOURS": "{hours} 小時",
+    "OVERTIME_TIME_RANGE": "加班時段：{startTime} - {endTime}",
+    "OVERTIME_REASON": "加班原因：{reason}",
+
     "ERROR_LOAD_OVERTIME": "載入加班記錄失敗",
     "ERROR_SUBMIT_OVERTIME": "提交加班申請失敗",
     "ERR_NO_PERMISSION": "您沒有權限執行此操作",
@@ -208,15 +213,21 @@
     "LEAVE_SUBMIT_BTN": "提交申請",
     
     "ANNUAL_LEAVE": "特休假",
-    "SICK_LEAVE": "病假",
+    "COMP_TIME_OFF": "加班補休假",
     "PERSONAL_LEAVE": "事假",
-    "MARRIAGE_LEAVE": "婚假",
+    "SICK_LEAVE": "未住院病假",
+    "HOSPITALIZATION_LEAVE": "住院病假",
     "BEREAVEMENT_LEAVE": "喪假",
+    "MARRIAGE_LEAVE": "婚假",
+    "PATERNITY_LEAVE": "陪產檢及陪產假",
     "MATERNITY_LEAVE": "產假",
-    "PATERNITY_LEAVE": "陪產假",
+    "OFFICIAL_LEAVE": "公假（含兵役假）",
+    "WORK_INJURY_LEAVE": "公傷假",
+    "ABSENCE_WITHOUT_LEAVE": "曠工",
+    "NATURAL_DISASTER_LEAVE": "天然災害停班",
     "FAMILY_CARE_LEAVE": "家庭照顧假",
     "MENSTRUAL_LEAVE": "生理假",
-    
+    "_COMMENT_LEAVE_UI": "=== 請假介面 ===",
     "DAYS": "天",
     
     "LEAVE_RECORDS_TITLE": "我的請假記錄",
@@ -236,6 +247,12 @@
     "LEAVE_APPROVED": "請假申請已核准",
     "LEAVE_REJECTED": "請假申請已拒絕",
     
+    "LEGEND_OVERTIME": "加班",
+    "LEGEND_LEAVE_APPROVED": "請假（已核准）",
+    "LEGEND_LEAVE_PENDING": "請假（審核中）",
+    "LEGEND_LEAVE_REJECTED": "請假（已拒絕）",
+
+
     "ERROR_FETCH_LEAVE_BALANCE": "無法載入假期餘額",
     "ERR_INVALID_LEAVE_TYPE": "無效的假別",
     "ERR_INSUFFICIENT_LEAVE_BALANCE": "{leaveType} 餘額不足（需要 {required} 天，剩餘 {available} 天）",
@@ -329,6 +346,374 @@
     "SALARY_CALCULATED": "系統計算中...",
     "HOURS_THIS_MONTH": "本月統計",
     "SALARY_REMINDER_TITLE": "溫馨提示",
-    "SALARY_REMINDER_TEXT": "薪資系統會自動整合您的打卡、加班和請假記錄進行計算。請確保按時打卡以確保薪資計算準確。"
+    "SALARY_REMINDER_TEXT": "薪資系統會自動整合您的打卡、加班和請假記錄進行計算。請確保按時打卡以確保薪資計算準確。",
 
+
+
+
+
+
+    "ANNOUNCEMENT_TITLE": "📢 最新公告",
+    "ANNOUNCEMENT_EMPTY": "目前沒有公告",
+    "BIOMETRIC_PUNCH_TITLE": "生物辨識快速打卡",
+    "BIOMETRIC_PUNCH_DESC": "使用 Face ID 或指紋一鍵打卡",
+    "BIOMETRIC_STATUS_NOT_SETUP": "未設定",
+    "BIOMETRIC_STATUS_ENABLED": "已啟用",
+    "BIOMETRIC_SETUP_BTN": "設定生物辨識打卡",
+    "BIOMETRIC_PUNCH_IN_BTN": "上班打卡",
+    "BIOMETRIC_PUNCH_OUT_BTN": "下班打卡",
+    "LINE_CHANNEL_TITLE": "加入員工 LINE 頻道，掌握最新公告！",
+    "LINE_CHANNEL_ID": "@789cdyeg",
+
+
+
+
+    "MONTHLY_STATS_TITLE": "本月出勤統計",
+    "STATS_TOTAL_HOURS": "總工時",
+    "STATS_WORK_DAYS": "出勤天數",
+    "STATS_ABNORMAL_COUNT": "異常記錄",
+    "STATS_NORMAL_DAYS": "正常打卡",
+    "UNIT_HOURS": "小時",
+    "UNIT_DAYS": "天",
+    "UNIT_RECORDS": "筆",
+    
+    "DAILY_ATTENDANCE_TITLE": "出勤記錄",
+    "PUNCH_RECORDS_TITLE": "打卡紀錄",
+    "OVERTIME_PERIOD": "加班時段",
+    "TIME_LABEL": "時間",
+    "REASON_LABEL": "原因",
+    "SYSTEM_JUDGMENT": "系統判斷",
+    
+    "LEAVE_INFO_TITLE": "請假資訊",
+    "LEAVE_TYPE": "假別",
+    "LEAVE_DAYS_COUNT": "天數",
+    "LEAVE_REASON_DISPLAY": "原因",
+    "REVIEW_COMMENT": "審核意見",
+
+
+    "ADMIN_ANNOUNCEMENT_MANAGEMENT": "📢 公告管理",
+    "ANNOUNCEMENT_TITLE_PLACEHOLDER": "公告標題",
+    "ANNOUNCEMENT_CONTENT_PLACEHOLDER": "公告內容",
+    "ANNOUNCEMENT_PRIORITY_NORMAL": "🔵 一般",
+    "ANNOUNCEMENT_PRIORITY_MEDIUM": "🟡 中等",
+    "ANNOUNCEMENT_PRIORITY_HIGH": "🔴 重要",
+    "BTN_PUBLISH_ANNOUNCEMENT": "發布公告",
+    "BTN_DELETE": "刪除",
+    "DELETE_ANNOUNCEMENT_CONFIRM": "確定要刪除這則公告嗎？",
+    "ANNOUNCEMENT_DELETED": "公告已刪除",
+    
+    "SEARCH_LOCATION_LABEL": "🔍 搜尋地點",
+    "SEARCH_LOCATION_PLACEHOLDER": "輸入地址或地點名稱搜尋...",
+    "LOCATION_NAME_PLACEHOLDER": "例如：台北101",
+    "LATITUDE_LABEL": "緯度",
+    "LONGITUDE_LABEL": "經度",
+    "PUNCH_RANGE_LABEL": "打卡範圍",
+    "PUNCH_RANGE_DESCRIPTION": "拖移滑桿以調整允許打卡的半徑（100-2000 公尺）。",
+    
+    "ADMIN_PUNCH_ANALYSIS_TITLE": "員工打卡分析",
+    "ADMIN_PUNCH_ANALYSIS_DESC": "查看員工每月打卡時間分布與工時統計",
+    "SELECT_EMPLOYEE_LABEL": "選擇員工",
+    "SELECT_EMPLOYEE_PLACEHOLDER": "請選擇員工",
+    "SELECT_MONTH_LABEL": "選擇月份",
+    "BTN_LOAD_ANALYSIS": "載入分析圖表",
+    "BTN_EXPORT_PUNCH_REPORT": "匯出打卡報表",
+    
+    "CHART_WORK_HOURS_TITLE": "每日工作時數",
+    "CHART_PUNCH_TIME_TITLE": "打卡時間分布",
+    "ANALYSIS_LOADING": "正在載入分析資料...",
+    "ANALYSIS_NO_DATA": "該月份無打卡記錄",
+
+
+    "MAKEUP_PUNCH_TITLE": "補打卡：{date}（{type}）",
+    "SELECT_PUNCH_TIME": "選擇{type}時間：",
+    "BTN_CANCEL": "取消",
+    "BTN_SUBMIT_PUNCH_IN": "提交補上班卡",
+    "BTN_SUBMIT_PUNCH_OUT": "提交補下班卡",
+
+
+    "BTN_SUBMIT_OVERTIME": "提交加班申請",
+    "BTN_SUBMIT_LEAVE": "提交請假申請",
+    "ERROR_FETCH_RECORDS": "無法取得記錄",
+    "CONNECTION_FAILED": "連線失敗",
+    "UNKNOWN_ERROR": "未知錯誤",
+    "CHECKING": "檢查中...",
+    "NETWORK_ERROR": "網路錯誤",
+    "ERR_AFTER_TODAY": "⚠️ 不能選擇今天以後的時間",
+
+
+    "SHIFT_PAGE_TITLE": "排班管理 - 出勤系統",
+  "SHIFT_MANAGEMENT_TITLE": "排班管理",
+  "BTN_BACK": "返回",
+  
+  "SHIFT_TAB_VIEW": "查看排班",
+  "SHIFT_TAB_ADD": "新增排班",
+  "SHIFT_TAB_BATCH": "批量排班",
+  "SHIFT_TAB_STATS": "統計分析",
+  
+  "SHIFT_FILTER_TITLE": "篩選條件",
+  "SHIFT_START_DATE": "開始日期",
+  "SHIFT_END_DATE": "結束日期",
+  "OPTION_ALL": "全部",
+  
+  "SHIFT_TYPE_MORNING": "早班",
+  "SHIFT_TYPE_AFTERNOON": "中班",
+  "SHIFT_TYPE_NIGHT": "晚班",
+  "SHIFT_TYPE_FULL": "全日班",
+  "SHIFT_TYPE_DAYOFF": "排休",
+  "SHIFT_TYPE_CUSTOM": "自訂",
+  
+  "BTN_APPLY_FILTER": "套用篩選",
+  "BTN_CLEAR_FILTER": "清除篩選",
+  "BTN_EXPORT_SHIFTS": "匯出排班表",
+  
+  "SHIFT_ADD_TITLE": "新增排班",
+  "SHIFT_EMPLOYEE_LABEL": "員工",
+  "SHIFT_SELECT_EMPLOYEE": "請選擇員工",
+  "SHIFT_DATE_LABEL": "日期",
+  "SHIFT_SELECT_TYPE": "請選擇班別",
+  
+  "SHIFT_MORNING_DESC": "早班 (08:00-16:00)",
+  "SHIFT_AFTERNOON_DESC": "中班 (12:00-20:00)",
+  "SHIFT_NIGHT_DESC": "晚班 (16:00-24:00)",
+  "SHIFT_FULL_DESC": "全日班 (09:00-18:00)",
+  "SHIFT_DAYOFF_DESC": "排休 (休假日)",
+  "SHIFT_CUSTOM_DESC": "自訂時間",
+  
+  "SHIFT_START_TIME": "上班時間",
+  "SHIFT_END_TIME": "下班時間",
+  "SHIFT_SELECT_LOCATION": "請選擇地點",
+  "SHIFT_NOTE_LABEL": "備註",
+  "SHIFT_NOTE_PLACEHOLDER": "輸入備註資訊...",
+  
+  "BTN_ADD_SHIFT": "新增排班",
+  "BTN_RESET": "重置",
+  
+  "SHIFT_BATCH_TITLE": "批量新增排班",
+  "SHIFT_BATCH_DESC": "上傳 CSV 或 Excel 檔案批量新增排班。檔案格式: 員工ID, 員工姓名, 日期, 班別, 上班時間, 下班時間, 地點, 備註",
+  "SHIFT_UPLOAD_DESC": "拖放檔案到此處，或點擊選擇檔案",
+  "BTN_SELECT_FILE": "選擇檔案",
+  "SHIFT_PREVIEW_TITLE": "預覽資料",
+  "BTN_CONFIRM_UPLOAD": "確認上傳",
+  "BTN_DOWNLOAD_TEMPLATE": "下載範本檔案",
+  
+  "SHIFT_STATS_LOADING": "載入統計資料中",
+  "BTN_PREV_MONTH": "◀ 上個月",
+  "BTN_NEXT_MONTH": "下個月 ▶",
+  "BTN_TODAY": "回到今天",
+  "SHIFT_CALENDAR_LOADING": "載入月曆中",
+
+  "SHIFT_NO_DATA": "目前沒有排班資料",
+  "SHIFT_LOAD_FAILED": "載入失敗",
+  "SHIFT_LOAD_ERROR": "載入失敗",
+  
+  "BTN_EDIT": "編輯",
+  
+  "SHIFT_STATS_TOTAL": "本月總排班",
+  
+  "SHIFT_FILL_TIME": "請填寫上班時間和下班時間",
+  "SHIFT_CONFIRM_CROSS_DAY": "下班時間早於上班時間，是否為跨日班別？",
+  "SHIFT_ADD_SUCCESS": "排班新增成功！",
+  "SHIFT_ADD_FAILED": "新增失敗",
+  "SHIFT_UPDATE_SUCCESS": "排班更新成功！",
+  "SHIFT_UPDATE_FAILED": "更新失敗",
+  "SHIFT_DELETE_CONFIRM": "確定要刪除這個排班嗎？",
+  "SHIFT_DELETE_SUCCESS": "排班已刪除",
+  "SHIFT_DELETE_FAILED": "刪除失敗",
+  
+  "SHIFT_NO_EXPORT_DATA": "目前沒有可匯出的資料",
+  "SHIFT_EXPORT_SUCCESS": "匯出成功",
+  
+  "SHIFT_BATCH_CSV_ONLY": "目前只支援 CSV 格式",
+  "SHIFT_BATCH_NO_DATA": "檔案中沒有有效資料",
+  "SHIFT_BATCH_UPLOAD_SUCCESS": "批量上傳成功",
+  "SHIFT_BATCH_UPLOAD_FAILED": "批量上傳失敗",
+  "SHIFT_BATCH_NETWORK_ERROR": "批量上傳失敗：網路錯誤",
+  
+  "SHIFT_DETAIL_TITLE": "排班詳情",
+  "SHIFT_NO_NOTE": "無",
+  
+  "SHIFT_DISTRIBUTION_TITLE": "本月員工排班分布",
+  "SHIFT_TYPE_DISTRIBUTION_TITLE": "本月班別分布",
+  "SHIFT_SHIFTS_COUNT": "{count} 班",
+
+
+  "SHIFT_LOGIN_REQUIRED": "請先登入",
+  "SHIFT_NO_EMPLOYEE_DATA": "目前沒有員工資料",
+  "SHIFT_LOAD_EMPLOYEES_FAILED": "載入員工列表失敗",
+  "SHIFT_LOAD_EMPLOYEES_ERROR": "載入員工列表失敗",
+  
+  "SHIFT_ADD_ERROR": "新增排班失敗",
+  
+  "SHIFT_EDIT_TITLE": "編輯排班",
+  "BTN_UPDATE_SHIFT": "更新排班",
+
+  "SHIFT_BATCH_UPLOAD_ERROR": "批量上傳失敗",
+
+
+
+
+
+
+
+
+
+  "SALARY_PAGE_TITLE": "薪資管理系統 - 出勤管家",
+  "SALARY_SYSTEM_TITLE": "薪資管理系統",
+  "SALARY_SYSTEM_DESC": "完整薪資管理解決方案（含津貼與扣款）",
+  
+  "SALARY_TAB_EMPLOYEE": "員工薪酬",
+  "SALARY_TAB_SETTING": "薪資設定",
+  "SALARY_TAB_MONTHLY": "月薪計算",
+  "SALARY_TAB_HOURLY": "時薪計算",
+  "SALARY_TAB_LIST": "薪資列表",
+  
+  "SALARY_QUERY_MONTH": "📅 查詢月份：",
+  "BTN_QUERY": "🔍 查詢",
+  "SALARY_MY_DETAIL": "我的薪資明細",
+  "SALARY_NO_RECORD": "尚無薪資記錄",
+  
+  "SALARY_EARNINGS_TITLE": "應發項目",
+  "SALARY_POSITION_ALLOWANCE": "職務加給",
+  "SALARY_MEAL_ALLOWANCE": "伙食費",
+  "SALARY_TRANSPORT_ALLOWANCE": "交通補助",
+  "SALARY_ATTENDANCE_BONUS": "全勤獎金",
+  "SALARY_PERFORMANCE_BONUS": "績效獎金",
+  "SALARY_RESTDAY_OT": "休息日加班費",
+  
+  "SALARY_DEDUCTIONS_TITLE": "扣款項目",
+  "SALARY_OTHER_DEDUCT": "其他扣款",
+  
+  "SALARY_BANK_INFO_TITLE": "銀行資訊",
+  "SALARY_BANK_NAME_LABEL": "銀行：",
+  "SALARY_ACCOUNT_LABEL": "帳號：",
+  
+  "SALARY_SETTING_FORM_TITLE": "員工薪資設定（完整版）",
+  "SALARY_BASIC_INFO": "基本資訊",
+  "SALARY_EMPLOYEE_LABEL": "員工",
+  "SALARY_SELECT_EMPLOYEE": "請選擇員工",
+  "SALARY_EMPLOYEE_ID_LABEL": "員工ID",
+  "SALARY_EMPLOYEE_NAME_LABEL": "員工姓名",
+  "SALARY_ID_NUMBER_LABEL": "身分證字號",
+  "SALARY_EMPLOYEE_TYPE_LABEL": "員工類型",
+  "SALARY_TYPE_LABEL": "薪資類型",
+  "SALARY_BASE_LABEL": "基本薪資",
+  "SALARY_ALLOWANCE_TITLE": "💰 固定津貼與補助",
+  
+  "BTN_SAVE_SALARY_SETTING": "💾 儲存薪資設定",
+  
+  "SALARY_LOGIN_REQUIRED": "請先登入",
+  "SALARY_INIT_FAILED": "初始化失敗",
+  "SALARY_SELECT_MONTH": "請選擇查詢月份",
+  "SALARY_FILL_REQUIRED": "請填寫必填欄位",
+  "SALARY_SELECT_TYPE": "請選擇員工類型和薪資類型",
+  "SALARY_SAVING": "正在儲存薪資設定...",
+  "SALARY_SAVE_SUCCESS": "薪資設定已成功儲存",
+  "SALARY_SAVE_FAILED": "儲存失敗",
+  "SALARY_SAVE_ERROR": "設定失敗，請稍後再試",
+  "SALARY_INPUT_EMPLOYEE_MONTH": "請輸入員工ID和計算月份",
+  "SALARY_CALCULATING": "正在計算薪資...",
+  "SALARY_CALC_SUCCESS": "計算完成",
+  "SALARY_CALC_FAILED": "計算失敗",
+  "SALARY_CALC_ERROR": "計算失敗，請稍後再試",
+  "SALARY_SAVING_RECORD": "正在儲存薪資單...",
+  "SALARY_RECORD_SAVED": "薪資單已成功儲存",
+  "SALARY_SELECT_YEAR_MONTH": "請選擇查詢年月",
+  "SALARY_HOURLY_MIN_190": "時薪不得低於190元",
+  "SALARY_INPUT_WORK_HOURS": "請輸入工作時數",
+  "SALARY_HOURLY_CALC_SUCCESS": "時薪計算完成",
+
+  "SALARY_SETTING_DESC": "設定基本薪資與所有津貼、扣款項目",
+  "PLEASE_SELECT": "請選擇",
+  "FULL_TIME": "正職",
+  "PART_TIME": "兼職",
+  "CONTRACT": "約聘",
+  "HINT_AUTO_FILL": "選擇員工後會自動填入ID和姓名",
+
+  "SALARY_POSITION_ALLOWANCE_LABEL": "職務加給",
+  "HINT_POSITION_ALLOWANCE": "依職務等級固定發放",
+  "SALARY_MEAL_ALLOWANCE_LABEL": "伙食費",
+  "HINT_MEAL_ALLOWANCE": "每月伙食補助（常見: 2,400元）",
+  "SALARY_TRANSPORT_ALLOWANCE_LABEL": "交通補助",
+  "HINT_TRANSPORT_ALLOWANCE": "每月交通津貼或油錢補助",
+  "SALARY_ATTENDANCE_BONUS_LABEL": "全勤獎金",
+  "HINT_ATTENDANCE_BONUS": "未請假可領取（系統自動判斷）",
+  "SALARY_PERFORMANCE_BONUS_LABEL": "績效獎金",
+  "HINT_PERFORMANCE_BONUS": "依績效考核發放",
+  "SALARY_OTHER_ALLOWANCES_LABEL": "其他津貼",
+  "HINT_OTHER_ALLOWANCES": "其他固定津貼項目",
+  
+  "SALARY_LEGAL_DEDUCTIONS_TITLE": "法定扣款項目",
+  "AUTO_CALCULATE": "✨ 自動計算",
+  "LEGAL_DEDUCTIONS_DESC": "輸入基本薪資後，系統會根據台灣勞動法規自動計算以下項目",
+  "AUTO": "自動",
+  
+  "SALARY_LABOR_INS_LABEL": "勞保費",
+  "HINT_LABOR_INS": "個人負擔20%",
+  "SALARY_HEALTH_INS_LABEL": "健保費",
+  "HINT_HEALTH_INS": "個人負擔30%",
+  "SALARY_EMPLOYMENT_INS_LABEL": "就業保險費",
+  "HINT_EMPLOYMENT_INS": "費率1%",
+  "SALARY_PENSION_RATE_LABEL": "勞退自提率 (%)",
+  "HINT_PENSION_RATE": "可選擇 0% ~ 6%",
+  "SALARY_PENSION_SELF_LABEL": "勞退自提金額",
+  "SALARY_TAX_LABEL": "所得稅",
+  
+  "OTHER_DEDUCTIONS_TITLE": "⚠️ 其他扣款項目",
+  "SALARY_WELFARE_FEE_LABEL": "福利金",
+  "HINT_WELFARE_FEE": "員工福利委員會福利金",
+  "SALARY_DORMITORY_FEE_LABEL": "宿舍費用",
+  "HINT_DORMITORY_FEE": "若公司提供宿舍",
+  "SALARY_GROUP_INSURANCE_LABEL": "團保費用",
+  "HINT_GROUP_INSURANCE": "團體保險個人分攤",
+  "SALARY_OTHER_DEDUCTIONS_LABEL": "其他扣款",
+  "HINT_OTHER_DEDUCTIONS": "其他固定扣款項目",
+  
+  "SALARY_PREVIEW_TITLE": "💡 薪資試算預覽",
+  "PREVIEW_BASE_SALARY": "基本薪資:",
+  "PREVIEW_ALLOWANCES_TOTAL": "固定津貼小計:",
+  "PREVIEW_INSURED_SALARY": "投保薪資級距:",
+  "PREVIEW_HOURLY_RATE": "平日時薪:",
+  "PREVIEW_LEGAL_DEDUCTIONS": "法定扣款:",
+  "PREVIEW_OTHER_DEDUCTIONS": "其他扣款:",
+  "PREVIEW_NET_SALARY": "預估實發薪資:",
+  
+  "BANK_INFO_TITLE": "🏦 銀行帳號資訊",
+  "BANK_CODE_LABEL": "銀行代碼",
+  "SELECT_BANK": "-- 請選擇銀行 --",
+  "BANK_ACCOUNT_LABEL": "銀行帳號",
+  "BANK_ACCOUNT_PLACEHOLDER": "請輸入銀行帳號",
+  "HIRE_DATE_LABEL": "入職日期",
+  "PAYMENT_DAY_LABEL": "發薪日",
+  "HINT_PAYMENT_DAY": "每月發薪日期 (1-31)",
+  "NOTE_LABEL": "備註",
+  "NOTE_PLACEHOLDER": "選填，可記錄特殊說明事項",
+  
+  "MONTHLY_CALC_TITLE": "月薪計算",
+  "MONTHLY_CALC_DESC": "自動計算員工月薪資，包含加班費、津貼、扣款項目",
+  "CALC_EMPLOYEE_LABEL": "員工",
+  "CALC_YEAR_MONTH_LABEL": "計算年月",
+  "BTN_START_CALC": "🧮 開始計算",
+  
+  "HOURLY_CALC_TITLE": "時薪計算",
+  "HOURLY_CALC_DESC": "計算時薪人員的薪資，根據實際工作時數計算",
+  "HOURLY_EMPLOYEE_LABEL": "員工",
+  "HOURLY_RATE_LABEL": "時薪",
+  "HINT_MIN_HOURLY_RATE": "最低時薪: 190元",
+  "WORK_HOURS_LABEL": "工作時數",
+  "HINT_WORK_HOURS": "本月實際工作時數",
+  "HINT_OVERTIME_HOURS": "平日加班時數（1.34倍）",
+  "HOURLY_CALC_MONTH_LABEL": "計算年月",
+  "BTN_START_HOURLY_CALC": "🧮 開始計算時薪",
+  
+  "SALARY_LIST_TITLE": "薪資列表",
+  "SALARY_LIST_DESC": "瀏覽所有員工的薪資記錄",
+  "FILTER_YEAR_MONTH_LABEL": "查詢年月",
+  "BTN_LOAD_SALARY_LIST": "📋 載入薪資列表",
+  
+  "SALARY_SELECT_QUERY_MONTH": "請選擇查詢月份",
+  "FOOTER_CREDITS": "由 0J 製作",
+
+  "ADJUST_REASON_LABEL": "補打卡理由",
+  "ADJUST_REASON_PLACEHOLDER": "請說明補打卡原因（例如：忘記打卡、系統故障等）",
+  "ADJUST_REASON_REQUIRED": "請填寫補打卡理由"
 }
