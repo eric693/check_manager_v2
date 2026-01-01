@@ -52,7 +52,7 @@
   "API_TEST_TITLE": "APIテストエリア",
   "API_TEST_DESCRIPTION": "下のボタンをクリックして、新しいAPI機能をテストしてください。",
   "API_TEST_BTN": "APIをテスト",
-  "FOOTER_VERSION": "勤怠管理システム v4.2.4",
+  "FOOTER_VERSION": "勤怠管理システム v4.2.8",
   "FOOTER_CREDITS_PREFIX": "制作：",
   "FOOTER_CREDITS_SUFFIX": "",
   "FOOTER_SPONSOR": "このプロジェクトを支援する",
@@ -342,7 +342,7 @@
   "BIOMETRIC_PUNCH_IN_BTN": "出勤打刻",
   "BIOMETRIC_PUNCH_OUT_BTN": "退勤打刻",
   "LINE_CHANNEL_TITLE": "従業員向けLINEチャンネルに参加して最新のお知らせをチェック！",
-  "LINE_CHANNEL_ID": "@789cdyeg",
+  "LINE_CHANNEL_ID": "@169ihdwj",
 
   "MONTHLY_STATS_TITLE": "今月の勤怠統計",
   "STATS_TOTAL_HOURS": "総勤務時間",
@@ -679,6 +679,7 @@
 
   "ADJUST_REASON_LABEL": "修正理由",
   "ADJUST_REASON_PLACEHOLDER": "修正理由を記入してください（例：打刻忘れ、システム障害など）",
-  "ADJUST_REASON_REQUIRED": "修正理由を入力してください"
+  "ADJUST_REASON_REQUIRED": "修正理由を入力してください",
 
+  "STATS_OVERTIME_HOURS": "残業時間"
 }

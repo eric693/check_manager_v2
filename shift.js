@@ -8,14 +8,82 @@ let currentShifts = [];
 let allEmployees = [];
 let allLocations = [];
 let batchData = [];
+let translations = {}; // 👈 新增：翻譯物件
+let currentLang = localStorage.getItem("lang") || "zh-TW"; // 👈 新增：當前語言
 
 // 月曆專用全域變數
 let currentYear = new Date().getFullYear();
 let currentMonth = new Date().getMonth(); // 0-11
 let allMonthShifts = [];
 
+// 👇 新增：翻譯函式
+function t(code, params = {}) {
+    let text = translations[code] || code;
+    
+    for (const key in params) {
+        let paramValue = params[key];
+        if (paramValue in translations) {
+            paramValue = translations[paramValue];
+        }
+        text = text.replace(`{${key}}`, paramValue);
+    }
+    return text;
+}
+
+// 👇 新增：載入翻譯檔案
+async function loadTranslations(lang) {
+    try {
+        const res = await fetch(`https://eric693.github.io/check_manager_v2/i18n/${lang}.json`);
+        if (!res.ok) {
+            throw new Error(`HTTP 錯誤: ${res.status}`);
+        }
+        translations = await res.json();
+        currentLang = lang;
+        localStorage.setItem("lang", lang);
+        renderTranslations();
+    } catch (err) {
+        console.error("載入語系失敗:", err);
+    }
+}
+
+// 👇 新增：渲染翻譯
+function renderTranslations(container = document) {
+    if (container === document) {
+        document.title = t("SHIFT_PAGE_TITLE");
+    }
+
+    const elementsToTranslate = container.querySelectorAll('[data-i18n]');
+    elementsToTranslate.forEach(element => {
+        const key = element.getAttribute('data-i18n');
+        const translatedText = t(key);
+        
+        if (translatedText !== key) {
+            if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                element.placeholder = translatedText;
+            } else {
+                element.textContent = translatedText;
+            }
+        }
+    });
+
+    const selectElements = container.querySelectorAll('select');
+    selectElements.forEach(select => {
+        const options = select.querySelectorAll('option[data-i18n-option]');
+        options.forEach(option => {
+            const key = option.getAttribute('data-i18n-option');
+            if (key) {
+                const translatedText = t(key);
+                if (translatedText !== key) {
+                    option.textContent = translatedText;
+                }
+            }
+        });
+    });
+}
+
 // ========== 初始化 ==========
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() { 
+    await loadTranslations(currentLang);
     initializeTabs();
     loadEmployees();
     loadLocations();
@@ -136,7 +204,7 @@ async function loadEmployees() {
         // ✅ 步驟 1: 檢查 token
         if (!token) {
             console.error('❌ 沒有 session token');
-            showMessage('請先登入', 'error');
+            showMessage(t('SHIFT_LOGIN_REQUIRED'), 'error');
             return;
         }
         
@@ -187,7 +255,7 @@ async function loadEmployees() {
                 console.warn('   1. 員工工作表沒有資料');
                 console.warn('   2. 所有員工都不是「啟用」狀態');
                 console.warn('   3. 資料格式不正確');
-                showMessage('目前沒有員工資料', 'warning');
+                showMessage(t('SHIFT_NO_EMPLOYEE_DATA'), 'warning');
             } else {
                 console.log('✅ 員工列表預覽（前 5 筆）:');
                 allEmployees.slice(0, 5).forEach((emp, index) => {
@@ -207,7 +275,7 @@ async function loadEmployees() {
         } else {
             console.error('❌ API 回傳失敗');
             console.error('   原因:', data.msg || '未知錯誤');
-            showMessage(data.msg || '載入員工列表失敗', 'error');
+            showMessage(data.msg || t('SHIFT_LOAD_EMPLOYEES_FAILED'), 'error');
         }
         
         console.log('═══════════════════════════════════════');
@@ -219,7 +287,7 @@ async function loadEmployees() {
         console.error('錯誤堆疊:', error.stack);
         console.error('═══════════════════════════════════════');
         
-        showMessage('載入員工列表失敗: ' + error.message, 'error');
+        showMessage(t('SHIFT_LOAD_EMPLOYEES_ERROR') + ': ' + error.message, 'error');
     }
 }
 
@@ -424,7 +492,7 @@ async function loadShifts(filters = {}) {
     const listContainer = document.getElementById('shift-list');
     if (!listContainer) return;
     
-    listContainer.innerHTML = '<div class="loading">載入中</div>';
+    listContainer.innerHTML = `<div class="loading">${t('SHIFT_LOADING')}</div>`;
     
     try {
         const token = localStorage.getItem('sessionToken');
@@ -457,11 +525,11 @@ async function loadShifts(filters = {}) {
             currentShifts = data.data || [];
             displayShifts(currentShifts);
         } else {
-            listContainer.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📋</div><p>載入失敗: ${data.msg}</p></div>`;
+            listContainer.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📋</div><p>${t('SHIFT_LOAD_FAILED')}: ${data.msg}</p></div>`;
         }
     } catch (error) {
         console.error('❌ 載入排班失敗:', error);
-        listContainer.innerHTML = '<div class="empty-state"><div class="empty-state-icon">❌</div><p>載入失敗</p></div>';
+        listContainer.innerHTML = `<div class="empty-state"><div class="empty-state-icon">❌</div><p>${t('SHIFT_LOAD_ERROR')}</p></div>`;
     }
 }
 
@@ -473,7 +541,7 @@ function displayShifts(shifts) {
         listContainer.innerHTML = `
             <div class="empty-state">
                 <div class="empty-state-icon">📅</div>
-                <p>目前沒有排班資料</p>
+                <p>${t('SHIFT_NO_DATA')}</p>
             </div>
         `;
         return;
@@ -493,27 +561,25 @@ function createShiftItem(shift) {
     
     const shiftTypeBadge = getShiftTypeBadge(shift.shiftType);
     
-    // 格式化時間
     const startTime = formatTimeOnly(shift.startTime);
     const endTime = formatTimeOnly(shift.endTime);
     
     div.innerHTML = `
         <div class="shift-info">
             <h3>${shift.employeeName} ${shiftTypeBadge}</h3>
-            <p>日期: ${formatDate(shift.date)}</p>
-            <p>時間: ${startTime} - ${endTime}</p>
-            <p>地點: ${shift.location}</p>
-            ${shift.note ? `<p>備註: ${shift.note}</p>` : ''}
+            <p>${t('SHIFT_DATE_LABEL')}: ${formatDate(shift.date)}</p>
+            <p>${t('SHIFT_TIME_LABEL')}: ${startTime} - ${endTime}</p>
+            <p>${t('SHIFT_LOCATION_LABEL')}: ${shift.location}</p>
+            ${shift.note ? `<p>${t('SHIFT_NOTE_LABEL')}: ${shift.note}</p>` : ''}
         </div>
         <div class="shift-actions">
-            <button class="btn-icon" onclick="editShift('${shift.shiftId}')">編輯</button>
-            <button class="btn-icon btn-danger" onclick="deleteShift('${shift.shiftId}')">刪除</button>
+            <button class="btn-icon" onclick="editShift('${shift.shiftId}')">${t('BTN_EDIT')}</button>
+            <button class="btn-icon btn-danger" onclick="deleteShift('${shift.shiftId}')">${t('BTN_DELETE')}</button>
         </div>
     `;
     
     return div;
 }
-
 function getShiftTypeBadge(shiftType) {
     const badgeClass = {
         '早班': 'badge-morning',
@@ -543,7 +609,7 @@ async function addShift() {
     const selectedOption = employeeSelect.selectedOptions[0];
     
     if (!selectedOption || !selectedOption.value) {
-        showMessage('請選擇員工', 'error');
+        showMessage(t('SHIFT_SELECT_EMPLOYEE'), 'error');
         return;
     }
     
@@ -553,13 +619,13 @@ async function addShift() {
     
     // 驗證時間欄位
     if (!startTime || !endTime) {
-        showMessage('請填寫上班時間和下班時間', 'error');
+        showMessage(t('SHIFT_FILL_TIME'), 'error');
         return;
     }
     
     // 驗證時間邏輯(結束時間應該晚於開始時間,除非是跨日班)
     if (startTime >= endTime && endTime !== '00:00') {
-        const confirmCrossDay = confirm('下班時間早於上班時間,是否為跨日班別?');
+        const confirmCrossDay = confirm(t('SHIFT_CONFIRM_CROSS_DAY'));
         if (!confirmCrossDay) {
             return;
         }
@@ -591,16 +657,16 @@ async function addShift() {
         console.log('✅ 新增回應:', data);
         
         if (data.ok) {
-            showMessage('排班新增成功!', 'success');
+            showMessage(t('SHIFT_ADD_SUCCESS'), 'success');
             resetForm();
             switchTab('view');
             loadShifts();
         } else {
-            showMessage(data.msg || '新增失敗', 'error');
+            showMessage(data.msg || t('SHIFT_ADD_FAILED'), 'error');
         }
     } catch (error) {
         console.error('❌ 新增排班失敗:', error);
-        showMessage('新增排班失敗', 'error');
+        showMessage(t('SHIFT_ADD_ERROR'), 'error');
     }
 }
 
@@ -610,7 +676,7 @@ async function editShift(shiftId) {
     
     switchTab('add');
     
-    document.querySelector('#add-tab h2').textContent = '編輯排班';
+    document.querySelector('#add-tab h2').textContent = t('SHIFT_EDIT_TITLE');
     document.getElementById('employee-select').value = shift.employeeId;
     document.getElementById('shift-date').value = shift.date;
     document.getElementById('shift-type').value = shift.shiftType;
@@ -625,7 +691,7 @@ async function editShift(shiftId) {
     if (shiftNoteEl) shiftNoteEl.value = shift.note || '';
     
     const submitBtn = document.querySelector('#add-shift-form button[type="submit"]');
-    submitBtn.textContent = '更新排班';
+    submitBtn.textContent = t('BTN_UPDATE_SHIFT');
     submitBtn.onclick = function(e) {
         e.preventDefault();
         updateShift(shiftId);
@@ -637,7 +703,7 @@ async function updateShift(shiftId) {
     const selectedOption = employeeSelect.selectedOptions[0];
     
     if (!selectedOption || !selectedOption.value) {
-        showMessage('請選擇員工', 'error');
+        showMessage(t('SHIFT_SELECT_EMPLOYEE'), 'error');
         return;
     }
     
@@ -664,21 +730,21 @@ async function updateShift(shiftId) {
         const data = await response.json();
         
         if (data.ok) {
-            showMessage('排班更新成功!', 'success');
+            showMessage(t('SHIFT_UPDATE_SUCCESS'), 'success');
             resetForm();
             switchTab('view');
             loadShifts();
         } else {
-            showMessage(data.msg || '更新失敗', 'error');
+            showMessage(data.msg || t('SHIFT_UPDATE_FAILED'), 'error');
         }
     } catch (error) {
         console.error('❌ 更新排班失敗:', error);
-        showMessage('更新排班失敗', 'error');
+        showMessage(t('SHIFT_UPDATE_ERROR'), 'error');
     }
 }
 
 async function deleteShift(shiftId) {
-    if (!confirm('確定要刪除這個排班嗎?')) return;
+    if (!confirm(t('SHIFT_DELETE_CONFIRM'))) return;
     
     try {
         const token = localStorage.getItem('sessionToken');
@@ -688,14 +754,14 @@ async function deleteShift(shiftId) {
         const data = await response.json();
         
         if (data.ok) {
-            showMessage('排班已刪除', 'success');
+            showMessage(t('SHIFT_DELETE_SUCCESS'), 'success');
             loadShifts();
         } else {
-            showMessage(data.msg || '刪除失敗', 'error');
+            showMessage(data.msg || t('SHIFT_DELETE_FAILED'), 'error');
         }
     } catch (error) {
         console.error('❌ 刪除排班失敗:', error);
-        showMessage('刪除失敗', 'error');
+        showMessage(t('SHIFT_DELETE_ERROR'), 'error');
     }
 }
 
@@ -741,14 +807,14 @@ function clearFilters() {
 
 function exportShifts() {
     if (currentShifts.length === 0) {
-        showMessage('目前沒有可匯出的資料', 'error');
+        showMessage(t('SHIFT_NO_EXPORT_DATA'), 'error');
         return;
     }
     
     const csv = convertToCSV(currentShifts);
     const filename = `排班表_${new Date().toISOString().split('T')[0]}.csv`;
     downloadCSV(csv, filename);
-    showMessage('匯出成功', 'success');
+    showMessage(t('SHIFT_EXPORT_SUCCESS'), 'success');
 }
 
 function convertToCSV(data) {
@@ -784,11 +850,11 @@ function resetForm() {
     const form = document.getElementById('add-shift-form');
     if (form) form.reset();
     
-    document.querySelector('#add-tab h2').textContent = '新增排班';
+    document.querySelector('#add-tab h2').textContent = t('SHIFT_ADD_TITLE');
     
     const submitBtn = document.querySelector('#add-shift-form button[type="submit"]');
     if (submitBtn) {
-        submitBtn.textContent = '新增排班';
+        submitBtn.textContent = t('BTN_ADD_SHIFT');
         submitBtn.onclick = null;
     }
     
@@ -842,7 +908,7 @@ function handleBatchFile(file) {
     if (file.name.endsWith('.csv')) {
         reader.readAsText(file, 'UTF-8');
     } else {
-        showMessage('目前只支援 CSV 格式', 'error');
+        showMessage(t('SHIFT_BATCH_CSV_ONLY'), 'error');
     }
 }
 
@@ -885,7 +951,7 @@ function parseBatchData(content, filename) {
     }
     
     if (data.length === 0) {
-        showMessage('檔案中沒有有效資料', 'error');
+        showMessage(t('SHIFT_BATCH_NO_DATA'), 'error');
         return;
     }
     
@@ -990,13 +1056,13 @@ async function confirmBatchUpload() {
                 document.body.removeChild(script);
                 
                 if (data.ok) {
-                    showMessage(data.msg || data.message || '批量上傳成功', 'success');
+                    showMessage(data.msg || data.message || t('SHIFT_BATCH_UPLOAD_SUCCESS'), 'success');
                     cancelBatchUpload();
                     switchTab('view');
                     loadShifts();
                     resolve(data);
                 } else {
-                    showMessage(data.msg || data.message || '批量上傳失敗', 'error');
+                    showMessage(data.msg || data.message || t('SHIFT_BATCH_UPLOAD_FAILED'), 'error');
                     reject(new Error(data.msg));
                 }
             };
@@ -1008,7 +1074,7 @@ async function confirmBatchUpload() {
                 console.error('❌ 批量上傳失敗: 無法載入腳本');
                 delete window[callbackName];
                 document.body.removeChild(script);
-                showMessage('批量上傳失敗: 網路錯誤', 'error');
+                showMessage(t('SHIFT_BATCH_NETWORK_ERROR'), 'error');
                 reject(new Error('Network error'));
             };
             
@@ -1017,7 +1083,7 @@ async function confirmBatchUpload() {
         
     } catch (error) {
         console.error('❌ 批量上傳失敗:', error);
-        showMessage('批量上傳失敗: ' + error.message, 'error');
+        showMessage(t('SHIFT_BATCH_UPLOAD_ERROR') + ': ' + error.message, 'error');
     }
 }
 
@@ -1135,7 +1201,7 @@ function displayMonthlyStats(shifts) {
         afternoon: 0,
         night: 0,
         full: 0,
-        dayoff: 0,  // 新增
+        dayoff: 0,
         custom: 0
     };
     
@@ -1145,35 +1211,35 @@ function displayMonthlyStats(shifts) {
             case '中班': stats.afternoon++; break;
             case '晚班': stats.night++; break;
             case '全日班': stats.full++; break;
-            case '排休': stats.dayoff++; break;  // 新增
+            case '排休': stats.dayoff++; break;
             case '自訂': stats.custom++; break;
         }
     });
     
     const html = `
         <div class="stat-card">
-            <div class="stat-label">本月總排班</div>
+            <div class="stat-label">${t('SHIFT_STATS_TOTAL')}</div>
             <div class="stat-value">${stats.total}</div>
         </div>
         <div class="stat-card">
-            <div class="stat-label">早班</div>
+            <div class="stat-label">${t('SHIFT_TYPE_MORNING')}</div>
             <div class="stat-value" style="color: #ff9800;">${stats.morning}</div>
         </div>
         <div class="stat-card">
-            <div class="stat-label">中班</div>
+            <div class="stat-label">${t('SHIFT_TYPE_AFTERNOON')}</div>
             <div class="stat-value" style="color: #2196f3;">${stats.afternoon}</div>
         </div>
         <div class="stat-card">
-            <div class="stat-label">晚班</div>
+            <div class="stat-label">${t('SHIFT_TYPE_NIGHT')}</div>
             <div class="stat-value" style="color: #9c27b0;">${stats.night}</div>
         </div>
         <div class="stat-card">
-            <div class="stat-label">排休</div>
+            <div class="stat-label">${t('SHIFT_TYPE_DAYOFF')}</div>
             <div class="stat-value" style="color: #757575;">${stats.dayoff}</div>
         </div>
         ${stats.custom > 0 ? `
         <div class="stat-card">
-            <div class="stat-label">自訂班別</div>
+            <div class="stat-label">${t('SHIFT_TYPE_CUSTOM')}</div>
             <div class="stat-value" style="color: #fbc02d;">${stats.custom}</div>
         </div>
         ` : ''}
@@ -1292,18 +1358,17 @@ function showShiftDetail(shiftId) {
         const startTime = formatTimeOnly(shift.startTime);
         const endTime = formatTimeOnly(shift.endTime);
         
-        const detail = `排班詳情:\n\n` +
-              `員工: ${shift.employeeName}\n` +
-              `日期: ${shift.date}\n` +
-              `班別: ${shift.shiftType}\n` +
-              `時間: ${startTime} - ${endTime}\n` +
-              `地點: ${shift.location}\n` +
-              `備註: ${shift.note || '無'}`;
+        const detail = t('SHIFT_DETAIL_TITLE') + ':\n\n' +
+              t('SHIFT_EMPLOYEE_LABEL') + ': ' + shift.employeeName + '\n' +
+              t('SHIFT_DATE_LABEL') + ': ' + shift.date + '\n' +
+              t('SHIFT_TYPE_LABEL') + ': ' + shift.shiftType + '\n' +
+              t('SHIFT_TIME_LABEL') + ': ' + startTime + ' - ' + endTime + '\n' +
+              t('SHIFT_LOCATION_LABEL') + ': ' + shift.location + '\n' +
+              t('SHIFT_NOTE_LABEL') + ': ' + (shift.note || t('SHIFT_NO_NOTE'));
         
         alert(detail);
     }
 }
-
 async function loadShiftDistribution() {
     const distributionContainer = document.getElementById('shift-distribution');
     if (!distributionContainer) return;

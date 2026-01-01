@@ -52,7 +52,7 @@
   "API_TEST_TITLE": "API Test Zone",
   "API_TEST_DESCRIPTION": "Click the button below to test new API functions.",
   "API_TEST_BTN": "Test API",
-  "FOOTER_VERSION": "Attendance Manager v4.2.4",
+  "FOOTER_VERSION": "Attendance Manager v4.2.8",
   "FOOTER_CREDITS_PREFIX": "Made by",
   "FOOTER_CREDITS_SUFFIX": "",
   "FOOTER_SPONSOR": "Sponsor this project",
@@ -346,7 +346,7 @@
   "BIOMETRIC_PUNCH_IN_BTN": "Punch In",
   "BIOMETRIC_PUNCH_OUT_BTN": "Punch Out",
   "LINE_CHANNEL_TITLE": "Join Employee LINE Channel for Latest Announcements!",
-  "LINE_CHANNEL_ID": "@789cdyeg",
+  "LINE_CHANNEL_ID": "@169ihdwj",
 
 
   "MONTHLY_STATS_TITLE": "Monthly Attendance Statistics",
@@ -698,6 +698,7 @@
 
   "ADJUST_REASON_LABEL": "Reason for Adjustment",
   "ADJUST_REASON_PLACEHOLDER": "Please describe the reason for the adjustment (e.g., forgot to check in, system error, etc.)",
-  "ADJUST_REASON_REQUIRED": "Please provide a reason for the adjustment"
+  "ADJUST_REASON_REQUIRED": "Please provide a reason for the adjustment",
 
+  "STATS_OVERTIME_HOURS": "Overtime Hours"
 }

@@ -67,7 +67,7 @@
   "API_TEST_DESCRIPTION": "Nhấp vào đây để kiểm thử chức năng API.",
   "API_TEST_BTN": "Kiểm thử API",
 
-  "FOOTER_VERSION": "Hệ thống chấm công v4.2.4",
+  "FOOTER_VERSION": "Hệ thống chấm công v4.2.8",
   "FOOTER_CREDITS_PREFIX": "Được làm bởi",
   "FOOTER_CREDITS_SUFFIX": "",
   "FOOTER_SPONSOR": "Tài trợ cho dự án này",
@@ -509,7 +509,7 @@
   "BIOMETRIC_PUNCH_OUT_BTN": "Chấm công ra",
 
   "LINE_CHANNEL_TITLE": "Tham gia kênh LINE nội bộ để nhận thông báo mới nhất!",
-  "LINE_CHANNEL_ID": "@789cdyeg",
+  "LINE_CHANNEL_ID": "@169ihdwj",
 
   "MONTHLY_STATS_TITLE": "Thống kê chấm công tháng này",
   "STATS_TOTAL_HOURS": "Tổng giờ làm",
@@ -725,6 +725,8 @@
 
   "ADJUST_REASON_LABEL": "Lý do điều chỉnh",
   "ADJUST_REASON_PLACEHOLDER": "Vui lòng nêu lý do điều chỉnh (ví dụ: quên chấm công, lỗi hệ thống, v.v.)",
-  "ADJUST_REASON_REQUIRED": "Vui lòng nhập lý do điều chỉnh"
+  "ADJUST_REASON_REQUIRED": "Vui lòng nhập lý do điều chỉnh",
 
+
+  "STATS_OVERTIME_HOURS": "Giờ làm thêm"
 }

@@ -65,7 +65,7 @@
     "API_TEST_DESCRIPTION": "คลิกปุ่มด้านล่างเพื่อทดสอบฟังก์ชัน API ใหม่",
     "API_TEST_BTN": "ทดสอบ API",
   
-    "FOOTER_VERSION": "ระบบจัดการเวลาทำงาน v4.2.4",
+    "FOOTER_VERSION": "ระบบจัดการเวลาทำงาน v4.2.8",
     "FOOTER_CREDITS_PREFIX": "พัฒนาโดย",
     "FOOTER_CREDITS_SUFFIX": "",
     "FOOTER_SPONSOR": "คลิกที่นี่เพื่อสนับสนุนโปรเจกต์นี้",
@@ -514,7 +514,7 @@
     "BIOMETRIC_PUNCH_OUT_BTN": "ลงเวลาออกงาน",
   
     "LINE_CHANNEL_TITLE": "เข้าร่วม LINE ช่องพนักงานเพื่อรับประกาศล่าสุด!",
-    "LINE_CHANNEL_ID": "@789cdyeg",
+    "LINE_CHANNEL_ID": "@169ihdwj",
   
     "MONTHLY_STATS_TITLE": "สถิติการเข้างานประจำเดือน",
     "STATS_TOTAL_HOURS": "ชั่วโมงรวม",
@@ -728,7 +728,8 @@
 
     "ADJUST_REASON_LABEL": "เหตุผลในการปรับแก้เวลา",
     "ADJUST_REASON_PLACEHOLDER": "โปรดระบุเหตุผลในการปรับแก้ (เช่น ลืมบันทึกเวลา, ระบบขัดข้อง เป็นต้น)",
-    "ADJUST_REASON_REQUIRED": "กรุณากรอกเหตุผลในการปรับแก้"
+    "ADJUST_REASON_REQUIRED": "กรุณากรอกเหตุผลในการปรับแก้",
 
+    "STATS_OVERTIME_HOURS": "ชั่วโมงทำงานล่วงเวลา"
 }
   

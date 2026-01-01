@@ -52,7 +52,7 @@
   "API_TEST_TITLE": "Uji API",
   "API_TEST_DESCRIPTION": "Klik tombol di bawah untuk menguji fungsi API.",
   "API_TEST_BTN": "Uji API",
-  "FOOTER_VERSION": "Sistem Absensi v4.2.4",
+  "FOOTER_VERSION": "Sistem Absensi v4.2.8",
   "FOOTER_CREDITS_PREFIX": "Dibuat oleh",
   "FOOTER_CREDITS_SUFFIX": "",
   "FOOTER_SPONSOR": "Sponsori proyek ini",
@@ -342,7 +342,7 @@
   "BIOMETRIC_PUNCH_IN_BTN": "Absen Masuk",
   "BIOMETRIC_PUNCH_OUT_BTN": "Absen Keluar",
   "LINE_CHANNEL_TITLE": "Gabung ke Channel LINE Karyawan untuk Mendapatkan Pengumuman Terbaru!",
-  "LINE_CHANNEL_ID": "@789cdyeg",
+  "LINE_CHANNEL_ID": "@169ihdwj",
 
   "MONTHLY_STATS_TITLE": "Statistik Kehadiran Bulanan",
   "STATS_TOTAL_HOURS": "Total Jam",
@@ -679,6 +679,7 @@
 
   "ADJUST_REASON_LABEL": "Alasan Penyesuaian",
   "ADJUST_REASON_PLACEHOLDER": "Harap jelaskan alasan penyesuaian (misalnya: lupa absen, kesalahan sistem, dll.)",
-  "ADJUST_REASON_REQUIRED": "Harap isi alasan penyesuaian"
+  "ADJUST_REASON_REQUIRED": "Harap isi alasan penyesuaian",
 
+  "STATS_OVERTIME_HOURS": "Jam Lembur"
 }
