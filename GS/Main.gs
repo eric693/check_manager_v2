@@ -50,6 +50,26 @@ function doGet(e) {
       // ==================== 員工管理 ====================
       case "getAllUsers":
         return respond1(handleGetAllUsers(e.parameter));
+      
+      case "updateUserRole":
+        return respond1(handleUpdateUserRole(e.parameter));
+      case "deleteUser":
+        return respond1(handleDeleteUser(e.parameter));
+      
+      case "updateEmployeeName":
+        if (!validateSession(e.parameter.token)) {
+          return respond1({ ok: false, code: "ERR_SESSION_INVALID" });
+        }
+        
+        const targetUserId = e.parameter.userId;
+        const newName = e.parameter.newName;
+        
+        if (!targetUserId || !newName) {
+          return respond1({ ok: false, msg: "缺少必要參數" });
+        }
+        
+        const updateNameResult = updateEmployeeName(targetUserId, newName);
+        return respond1(updateNameResult);
       // ==================== 補打卡審核 ====================
       case "getReviewRequest":
         return respond1(handleGetReviewRequest());
@@ -113,8 +133,10 @@ function doGet(e) {
         return respond1(handleGetMySalaryHistory(e.parameter));
       case "calculateMonthlySalary":
         return respond1(handleCalculateMonthlySalary(e.parameter));
-      case "saveMonthlySalary":
-        return respond1(handleSaveMonthlySalary(e.parameter));
+      case "getEmployeeWorkHours":
+        return respond1(handleGetEmployeeWorkHours(e.parameter));
+      // case "saveMonthlySalary":
+      //   return respond1(handleSaveMonthlySalary(e.parameter));
       case "getAllMonthlySalary":
         return respond1(handleGetAllMonthlySalary(e.parameter));
        // ==================== 日薪系統 ====================
@@ -130,6 +152,130 @@ function doGet(e) {
         return respond1(handleGetAllDailyEmployees(e.parameter));
       case "getDailySalaryRecords":
         return respond1(handleGetDailySalaryRecords(e.parameter));
+
+      case "saveMonthlySalary":
+        return saveMonthlySalaryAPI();
+
+      case 'exportAllSalaryExcel':
+        try {
+          Logger.log('📊 收到 exportAllSalaryExcel 请求');
+          Logger.log('   action: ' + action);
+          Logger.log('   token: ' + (e.parameter.token ? '有' : '无'));
+          Logger.log('   yearMonth: ' + e.parameter.yearMonth);
+          
+          // ⭐ 验证 session
+          if (!e.parameter.token) {
+            Logger.log('❌ 缺少 token');
+            return respond1({ 
+              ok: false, 
+              msg: '缺少 token',
+              code: 'MISSING_TOKEN' 
+            });
+          }
+          
+          if (!validateSession(e.parameter.token)) {
+            Logger.log('❌ token 验证失败');
+            return respond1({ 
+              ok: false, 
+              msg: '未授權或 session 已過期',
+              code: 'SESSION_INVALID' 
+            });
+          }
+          
+          Logger.log('✅ token 验证成功');
+          
+          const sessionResult = handleCheckSession(e.parameter.token);
+          
+          if (!sessionResult.ok || !sessionResult.user) {
+            Logger.log('❌ 无法取得使用者资讯');
+            return respond1({ 
+              ok: false, 
+              msg: 'Session 資料無效',
+              code: 'SESSION_DATA_INVALID' 
+            });
+          }
+          
+          const user = sessionResult.user;
+          Logger.log('👤 使用者: ' + user.name);
+          Logger.log('🔐 權限: ' + user.dept);
+          
+          if (user.dept !== '管理員') {
+            Logger.log('❌ 权限不足');
+            return respond1({ 
+              ok: false, 
+              msg: '此功能僅限管理員使用',
+              code: 'PERMISSION_DENIED' 
+            });
+          }
+          
+          const yearMonth = e.parameter.yearMonth;
+          if (!yearMonth) {
+            Logger.log('❌ 缺少 yearMonth');
+            return respond1({ 
+              ok: false, 
+              msg: '缺少年月參數',
+              code: 'MISSING_YEAR_MONTH' 
+            });
+          }
+          
+          Logger.log(`📊 管理員 ${user.name} 請求匯出 ${yearMonth} 薪資總表`);
+          
+          // ⭐⭐⭐ 關鍵修正：設定 globalThis.currentRequest
+          globalThis.currentRequest = e;
+          
+          // ⭐⭐⭐ 呼叫匯出函数（不傳參數）
+          const result = exportAllSalaryExcel();
+          
+          Logger.log('📤 exportAllSalaryExcel 回传类型: ' + typeof result);
+          
+          // ⭐⭐⭐ 修正：result 是 ContentService 物件，需要解析
+          try {
+            const resultContent = result.getContent();
+            const resultJson = JSON.parse(resultContent);
+            
+            Logger.log('📤 解析後的結果: ' + JSON.stringify(resultJson));
+            
+            if (resultJson.ok) {
+              return respond1({ 
+                ok: true, 
+                fileUrl: resultJson.data.fileUrl,
+                fileName: resultJson.data.fileName,
+                recordCount: resultJson.data.recordCount,
+                msg: '匯出成功'
+              });
+            } else {
+              return respond1({ 
+                ok: false, 
+                msg: resultJson.message || resultJson.msg || '匯出失敗'
+              });
+            }
+          } catch (parseError) {
+            Logger.log('❌ 解析結果失敗: ' + parseError);
+            return respond1({ 
+              ok: false, 
+              msg: '結果解析失敗: ' + parseError.message 
+            });
+          }
+          
+        } catch (error) {
+          Logger.log('❌ exportAllSalaryExcel 錯誤: ' + error);
+          Logger.log('❌ 錯誤堆疊: ' + error.stack);
+          return respond1({ 
+            ok: false, 
+            msg: '系統錯誤: ' + error.message 
+          });
+        }
+        break;
+      // 在 doGet(e) 的 switch 區塊中新增：
+      case "getEmployeeMonthlyPunchData":
+        return respond1(handleGetEmployeeMonthlyPunchData(e.parameter));
+      
+      case "getAnnouncements":
+        return respond1(handleGetAnnouncements(e.parameter));
+      case "addAnnouncement":
+        return respond1(handleAddAnnouncement(e.parameter));
+      case "deleteAnnouncement":
+        return respond1(handleDeleteAnnouncement(e.parameter));
       // ==================== 測試端點 ====================
       case "initApp":
         return respond1(handleInitApp(e.parameter));
@@ -145,6 +291,84 @@ function doGet(e) {
     return respond1({ ok: false, msg: err.message });
   }
 }
+
+// Main.gs - 新增 LINE Bot Webhook 處理
+
+/**
+ * 處理 LINE Webhook 請求
+ */
+function doPost(e) {
+  try {
+    const json = JSON.parse(e.postData.contents);
+    
+    // 驗證 LINE Signature（安全性）
+    const signature = e.parameter.signature || e.headers['X-Line-Signature'];
+    if (!verifyLineSignature_(e.postData.contents, signature)) {
+      return ContentService.createTextOutput(JSON.stringify({ error: 'Invalid signature' }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    // 處理 LINE 事件
+    json.events.forEach(event => {
+      if (event.type === 'message' && event.message.type === 'text') {
+        handleLineMessage(event);
+      } else if (event.type === 'message' && event.message.type === 'location') {
+        handleLineLocation(event);
+      }
+    });
+    
+    return ContentService.createTextOutput(JSON.stringify({ status: 'ok' }))
+      .setMimeType(ContentService.MimeType.JSON);
+      
+  } catch (error) {
+    Logger.log('❌ Webhook 錯誤: ' + error);
+    return ContentService.createTextOutput(JSON.stringify({ error: error.message }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+/**
+ * 驗證 LINE Signature
+ */
+/**
+ * 驗證 LINE Signature（測試模式：暫時停用）
+ */
+function verifyLineSignature_(body, signature) {
+  // ⚠️ 測試期間暫時返回 true
+  Logger.log('⚠️ Signature 驗證已暫時停用（測試模式）');
+  return true;
+  
+  /* 
+  // ✅ 正式上線時請啟用以下程式碼：
+  try {
+    const channelSecret = PropertiesService.getScriptProperties().getProperty('LINE_CHANNEL_SECRET');
+    
+    if (!channelSecret) {
+      Logger.log('❌ 找不到 LINE_CHANNEL_SECRET');
+      return false;
+    }
+    
+    const hash = Utilities.computeHmacSha256Signature(body, channelSecret);
+    const expectedSignature = Utilities.base64Encode(hash);
+    
+    Logger.log('🔐 Expected Signature: ' + expectedSignature);
+    Logger.log('🔐 Received Signature: ' + signature);
+    
+    return expectedSignature === signature;
+    
+  } catch (error) {
+    Logger.log('❌ Signature 驗證錯誤: ' + error);
+    return false;
+  }
+  */
+}
+
+// function verifyLineSignature_(body, signature) {
+//   const channelSecret = PropertiesService.getScriptProperties().getProperty('LINE_CHANNEL_SECRET');
+//   const hash = Utilities.computeHmacSha256Signature(body, channelSecret);
+//   const expectedSignature = Utilities.base64Encode(hash);
+//   return expectedSignature === signature;
+// }
 
 // ==================== 排班系統 Handler 函數 ====================
 
@@ -465,7 +689,7 @@ function handleSetEmployeeSalaryTW(params) {
       mealAllowance: parseFloat(params.mealAllowance) || 0,              // H: 伙食費
       transportAllowance: parseFloat(params.transportAllowance) || 0,    // I: 交通補助
       attendanceBonus: parseFloat(params.attendanceBonus) || 0,          // J: 全勤獎金
-      performanceBonus: parseFloat(params.performanceBonus) || 0,        // K: 績效獎金
+      performanceBonus: parseFloat(params.performanceBonus) || 0,        // K: 業績獎金
       otherAllowances: parseFloat(params.otherAllowances) || 0,          // L: 其他津貼
       
       // ========== 銀行資訊 (4 個參數: M-P) ==========
@@ -498,21 +722,12 @@ function handleSetEmployeeSalaryTW(params) {
     Logger.log('   - 伙食費: ' + salaryData.mealAllowance);
     Logger.log('   - 交通補助: ' + salaryData.transportAllowance);
     Logger.log('   - 全勤獎金: ' + salaryData.attendanceBonus);
-    Logger.log('   - 績效獎金: ' + salaryData.performanceBonus);
+    Logger.log('   - 業績獎金: ' + salaryData.performanceBonus);
     Logger.log('   - 其他津貼: ' + salaryData.otherAllowances);
     Logger.log('   - 福利金: ' + salaryData.welfareFee);
     Logger.log('   - 宿舍費用: ' + salaryData.dormitoryFee);
     Logger.log('   - 團保費用: ' + salaryData.groupInsurance);
     Logger.log('   - 其他扣款: ' + salaryData.otherDeductions);
-    
-    // 驗證最低薪資
-    if (salaryData.salaryType === '月薪' && salaryData.baseSalary < 28590) {
-      return { ok: false, msg: "月薪不得低於 28,590 元（2025年基本工資）" };
-    }
-    
-    if (salaryData.salaryType === '時薪' && salaryData.baseSalary < 190) {
-      return { ok: false, msg: "時薪不得低於 190 元（2025年基本工資）" };
-    }
     
     Logger.log('💾 開始儲存薪資設定...');
     
@@ -551,4 +766,101 @@ function handleGetEmployeeSalaryTW(params) {
   } catch (error) {
     return { ok: false, msg: error.message };
   }
+}
+
+
+// LineBotPunch.gs - 補充缺少的函數
+
+/**
+ * 發送簡單文字回覆
+ */
+function replyMessage(replyToken, text) {
+  const message = {
+    type: 'text',
+    text: text
+  };
+  
+  sendLineReply_(replyToken, [message]);
+}
+
+/**
+ * 🧪 測試函數：模擬收到「打卡」訊息
+ */
+function testLineBotMessage() {
+  Logger.log('🧪 測試 LINE Bot 打卡流程');
+  Logger.log('');
+  
+  // 模擬 LINE Webhook 事件
+  const testEvent = {
+    postData: {
+      contents: JSON.stringify({
+        events: [
+          {
+            type: 'message',
+            replyToken: 'test-reply-token-12345',
+            source: {
+              userId: 'U68e0ca9d516e63ed15bf9387fad174ac' // ⚠️ 替換成你的 LINE User ID
+            },
+            message: {
+              type: 'text',
+              text: '打卡'
+            }
+          }
+        ]
+      })
+    },
+    parameter: {},
+    headers: {
+      'X-Line-Signature': 'test-signature'
+    }
+  };
+  
+  Logger.log('📥 模擬發送訊息...');
+  const result = doPost(testEvent);
+  
+  Logger.log('');
+  Logger.log('📤 結果:');
+  Logger.log(result.getContent());
+}
+
+/**
+ * 🧪 測試函數：模擬收到位置訊息
+ */
+function testLineBotLocation() {
+  Logger.log('🧪 測試 LINE Bot 位置打卡');
+  Logger.log('');
+  
+  // 模擬位置訊息
+  const testEvent = {
+    postData: {
+      contents: JSON.stringify({
+        events: [
+          {
+            type: 'message',
+            replyToken: 'test-reply-token-67890',
+            source: {
+              userId: 'U68e0ca9d516e63ed15bf9387fad174ac' // ⚠️ 替換成你的 LINE User ID
+            },
+            message: {
+              type: 'location',
+              latitude: 25.0330,  // ⚠️ 替換成你的測試座標
+              longitude: 121.5654,
+              address: '測試地址'
+            }
+          }
+        ]
+      })
+    },
+    parameter: {},
+    headers: {
+      'X-Line-Signature': 'test-signature'
+    }
+  };
+  
+  Logger.log('📍 模擬傳送位置...');
+  const result = doPost(testEvent);
+  
+  Logger.log('');
+  Logger.log('📤 結果:');
+  Logger.log(result.getContent());
 }

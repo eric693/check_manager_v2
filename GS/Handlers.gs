@@ -1,19 +1,110 @@
 // Handlers.gs - 完整版本（包含原有功能 + 薪資系統完全修正版）
 
 // ==================== 登入與認證相關 ====================
+// Handlers.gs - 完全優化版 handleGetProfile
+
+/**
+ * ✅ 優化版：一次完成所有登入流程
+ */
+// Handlers.gs - 修改 handleGetProfile
 
 function handleGetProfile(code) {
-  const tokenResp = exchangeCodeForToken_(code);
-  const profile   = getLineUserInfo_(tokenResp);
-  const sToken    = writeSession_(profile.userId);
-  writeEmployee_(profile);
-  return {
-    ok: true,
-    code: "WELCOME_BACK",
-    params: { name: profile.displayName },
-    sToken
-  };
+  try {
+    const tokenResp = exchangeCodeForToken_(code);
+    const profile = getLineUserInfo_(tokenResp);
+    const sToken = writeSession_(profile.userId);
+    const employee = writeEmployee_(profile);
+    
+    // ⭐⭐⭐ 關鍵：不再在這裡查詢異常記錄
+    return {
+      ok: true,
+      code: "WELCOME_BACK",
+      params: { name: profile.displayName },
+      sToken: sToken,
+      user: {
+        userId: profile.userId,
+        employeeId: profile.userId,
+        email: profile.email || "",
+        name: profile.displayName,
+        picture: profile.pictureUrl,
+        dept: employee[5] || "員工",
+        status: "啟用"
+      }
+      // ⭐ 移除 abnormalRecords
+    };
+    
+  } catch (error) {
+    return { ok: false, code: "ERR_LOGIN_FAILED", msg: error.message };
+  }
 }
+// function handleGetProfile(code) {
+//   try {
+//     Logger.log('📋 開始登入流程');
+    
+//     // 步驟 1：兌換 LINE Token
+//     const tokenResp = exchangeCodeForToken_(code);
+    
+//     // 步驟 2：取得 LINE 使用者資料
+//     const profile = getLineUserInfo_(tokenResp);
+    
+//     // 步驟 3：建立 Session
+//     const sToken = writeSession_(profile.userId);
+    
+//     // 步驟 4：寫入/更新員工資料
+//     const employee = writeEmployee_(profile);
+    
+//     // ⭐⭐⭐ 關鍵優化：直接返回完整使用者資料 + 異常記錄
+//     // 這樣前端就不需要再呼叫 initApp，減少一次 API 請求
+    
+//     const now = new Date();
+//     const month = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0");
+    
+//     // 取得異常記錄
+//     const records = getAttendanceRecords(month, profile.userId);
+//     const abnormalResults = checkAttendanceAbnormal(records);
+    
+//     Logger.log('✅ 登入完成，返回完整資料');
+    
+//     return {
+//       ok: true,
+//       code: "WELCOME_BACK",
+//       params: { name: profile.displayName },
+//       sToken: sToken,
+//       // ⭐ 新增：直接返回使用者資料
+//       user: {
+//         userId: profile.userId,
+//         employeeId: profile.userId,
+//         email: profile.email || "",
+//         name: profile.displayName,
+//         picture: profile.pictureUrl,
+//         dept: employee[5] || "員工",  // 從 writeEmployee_ 返回的 row 取得部門
+//         status: "啟用"
+//       },
+//       // ⭐ 新增：直接返回異常記錄
+//       abnormalRecords: abnormalResults
+//     };
+    
+//   } catch (error) {
+//     Logger.log('❌ 登入失敗: ' + error);
+//     return {
+//       ok: false,
+//       code: "ERR_LOGIN_FAILED",
+//       msg: error.message
+//     };
+//   }
+// }
+// function handleGetProfile(code) {
+//   const tokenResp = exchangeCodeForToken_(code);
+//   const profile   = getLineUserInfo_(tokenResp);
+//   const sToken    = writeSession_(profile.userId);
+//   writeEmployee_(profile);
+//   return {
+//     ok: true,
+//     code: "WELCOME_BACK",
+//     params: { name: profile.displayName },
+//     sToken
+//   };
+// }
 
 function handleGetLoginUrl() {
   const baseUrl = LINE_REDIRECT_URL;
@@ -43,10 +134,164 @@ function handlePunch(params) {
   return punch(token, type, parseFloat(lat), parseFloat(lng), note);
 }
 
+// function handleAdjustPunch(params) {
+//   const { token, type, lat, lng, note, datetime } = params;
+//   const punchDate = datetime ? new Date(datetime) : new Date();
+//   return punchAdjusted(token, type, punchDate, parseFloat(lat), parseFloat(lng), note);
+// }
+
+/**
+ * ✅ 處理補打卡（完全修正版 - 強化參數驗證和日誌）
+ */
 function handleAdjustPunch(params) {
-  const { token, type, lat, lng, note, datetime } = params;
-  const punchDate = datetime ? new Date(datetime) : new Date();
-  return punchAdjusted(token, type, punchDate, parseFloat(lat), parseFloat(lng), note);
+  try {
+    Logger.log('═══════════════════════════════════════');
+    Logger.log('📋 handleAdjustPunch 開始');
+    Logger.log('═══════════════════════════════════════');
+    
+    // ⭐ 步驟 1：記錄收到的原始參數
+    Logger.log('📥 收到的原始 params 物件:');
+    Logger.log('   - token: ' + (params.token ? params.token.substring(0, 20) + '...' : '缺少'));
+    Logger.log('   - type: ' + (params.type || '缺少'));
+    Logger.log('   - datetime: ' + (params.datetime || '缺少'));
+    Logger.log('   - lat: ' + (params.lat || '缺少'));
+    Logger.log('   - lng: ' + (params.lng || '缺少'));
+    Logger.log('   - note: ' + (params.note || '缺少'));
+    Logger.log('');
+    
+    // ⭐ 步驟 2：解構參數（使用解構賦值）
+    const { token, type, lat, lng, note, datetime } = params;
+    
+    // ⭐ 步驟 3：驗證必要參數
+    if (!token) {
+      Logger.log('❌ 缺少 token');
+      return { ok: false, code: "ERR_MISSING_TOKEN", msg: "缺少認證 token" };
+    }
+    
+    if (!type) {
+      Logger.log('❌ 缺少 type');
+      return { ok: false, code: "ERR_MISSING_TYPE", msg: "缺少打卡類型" };
+    }
+    
+    if (!datetime) {
+      Logger.log('❌ 缺少 datetime');
+      return { ok: false, code: "ERR_MISSING_DATETIME", msg: "缺少日期時間" };
+    }
+    
+    if (!lat || !lng) {
+      Logger.log('❌ 缺少座標');
+      return { ok: false, code: "ERR_MISSING_LOCATION", msg: "缺少位置資訊" };
+    }
+    
+    // ⭐⭐⭐ 關鍵驗證：理由長度
+    if (!note || note.trim().length < 2) {
+      Logger.log('❌ 理由不足 2 個字');
+      Logger.log('   note 內容: "' + note + '"');
+      Logger.log('   note 長度: ' + (note ? note.length : 0));
+      return { ok: false, code: "ERR_REASON_TOO_SHORT", msg: "補打卡理由至少需要 2 個字" };
+    }
+    
+    Logger.log('✅ 所有參數驗證通過');
+    Logger.log('');
+    
+    // ⭐ 步驟 4：轉換日期
+    const punchDate = datetime ? new Date(datetime) : new Date();
+    
+    if (isNaN(punchDate.getTime())) {
+      Logger.log('❌ 日期格式錯誤');
+      return { ok: false, code: "ERR_INVALID_DATE", msg: "日期格式錯誤" };
+    }
+    
+    Logger.log('📅 轉換後的日期: ' + punchDate.toISOString());
+    Logger.log('');
+    
+    // ⭐ 步驟 5：記錄即將傳遞給核心函數的參數
+    Logger.log('📡 準備呼叫 punchAdjusted()');
+    Logger.log('   參數 1 (token): ' + token.substring(0, 20) + '...');
+    Logger.log('   參數 2 (type): ' + type);
+    Logger.log('   參數 3 (punchDate): ' + punchDate.toISOString());
+    Logger.log('   參數 4 (lat): ' + parseFloat(lat));
+    Logger.log('   參數 5 (lng): ' + parseFloat(lng));
+    Logger.log('   參數 6 (note): ' + note);  // ⭐⭐⭐ 確認有傳遞
+    Logger.log('');
+    
+    // ⭐⭐⭐ 關鍵：呼叫核心函數並傳遞所有 6 個參數
+    const result = punchAdjusted(
+      token, 
+      type, 
+      punchDate, 
+      parseFloat(lat), 
+      parseFloat(lng), 
+      note  // ⭐ 確保理由有傳遞
+    );
+    
+    Logger.log('📤 punchAdjusted() 回傳結果:');
+    Logger.log('   - ok: ' + result.ok);
+    Logger.log('   - code: ' + (result.code || '無'));
+    Logger.log('   - msg: ' + (result.msg || '無'));
+    Logger.log('');
+    Logger.log('═══════════════════════════════════════');
+    
+    return result;
+    
+  } catch (error) {
+    Logger.log('');
+    Logger.log('❌❌❌ handleAdjustPunch 發生錯誤');
+    Logger.log('錯誤訊息: ' + error.message);
+    Logger.log('錯誤堆疊: ' + error.stack);
+    Logger.log('═══════════════════════════════════════');
+    
+    return { 
+      ok: false, 
+      code: "ERR_INTERNAL_ERROR", 
+      msg: "補打卡處理失敗: " + error.message 
+    };
+  }
+}
+
+/**
+ * 🧪 測試 handleAdjustPunch（完整流程）
+ */
+function testHandleAdjustPunchComplete() {
+  Logger.log('🧪 測試 handleAdjustPunch 完整流程');
+  Logger.log('═══════════════════════════════════════');
+  Logger.log('');
+  
+  const testParams = {
+    token: 'a8f8ca99-97d6-4643-ad8e-67a73f2bb649',  // ⚠️ 替換成你的有效 token
+    type: '上班',
+    datetime: '2025-12-16T10:30:00',
+    lat: '25.0330',
+    lng: '121.5654',
+    note: '測試補打卡理由：系統測試用'
+  };
+  
+  Logger.log('📥 測試參數:');
+  Logger.log(JSON.stringify(testParams, null, 2));
+  Logger.log('');
+  
+  const result = handleAdjustPunch(testParams);
+  
+  Logger.log('');
+  Logger.log('📤 最終測試結果:');
+  Logger.log(JSON.stringify(result, null, 2));
+  Logger.log('');
+  
+  if (result.ok) {
+    Logger.log('✅✅✅ 測試成功！');
+    Logger.log('');
+    Logger.log('📋 請檢查 Google Sheet:');
+    Logger.log('   1. 打開「補打卡申請」工作表');
+    Logger.log('   2. 應該看到新增一筆「待審核」的記錄');
+    Logger.log('   3. 「原因」欄應該有:「測試補打卡理由：系統測試用」');
+    Logger.log('');
+  } else {
+    Logger.log('❌ 測試失敗');
+    Logger.log('   code: ' + result.code);
+    Logger.log('   msg: ' + result.msg);
+  }
+  
+  Logger.log('═══════════════════════════════════════');
 }
 
 // ==================== 出勤記錄相關 ====================
@@ -59,14 +304,57 @@ function handleGetAbnormalRecords(params) {
   return { ok: true, records: abnormalResults };
 }
 
+
+/**
+ * ✅ 處理取得出勤詳細資料（完整修正版 - 含打卡+請假+加班）
+ */
 function handleGetAttendanceDetails(params) {
   const { month, userId } = params;
-  if (!month) return { ok: false, code: "ERR_MISSING_MONTH" };
   
-  const records = getAttendanceRecords(month, userId);
-  const results = checkAttendance(records);  
+  Logger.log('═══════════════════════════════════════');
+  Logger.log('📋 handleGetAttendanceDetails 開始');
+  Logger.log('   month: ' + month);
+  Logger.log('   userId: ' + userId);
+  Logger.log('═══════════════════════════════════════');
   
-  return { ok: true, records: results };
+  if (!month) {
+    Logger.log('❌ 缺少 month 參數');
+    return { ok: false, code: "ERR_MISSING_MONTH" };
+  }
+  
+  try {
+    // ⭐⭐⭐ 關鍵修正：直接呼叫 DbOperations.gs 中的 getAttendanceDetails
+    // 這個函數會自動合併 打卡 + 請假 + 加班 資料
+    const result = getAttendanceDetails(month, userId);
+    
+    Logger.log('✅ 資料合併完成');
+    Logger.log('   ok: ' + result.ok);
+    Logger.log('   records 數量: ' + (result.records ? result.records.length : 0));
+    
+    // 檢查是否有請假和加班資料
+    if (result.ok && result.records) {
+      const hasLeave = result.records.some(r => r.leave);
+      const hasOvertime = result.records.some(r => r.overtime);
+      
+      Logger.log('   包含請假: ' + (hasLeave ? '是' : '否'));
+      Logger.log('   包含加班: ' + (hasOvertime ? '是' : '否'));
+    }
+    
+    Logger.log('═══════════════════════════════════════');
+    
+    return result;
+    
+  } catch (error) {
+    Logger.log('❌ handleGetAttendanceDetails 錯誤: ' + error);
+    Logger.log('   錯誤堆疊: ' + error.stack);
+    Logger.log('═══════════════════════════════════════');
+    
+    return { 
+      ok: false, 
+      code: "INTERNAL_ERROR",
+      msg: error.message 
+    };
+  }
 }
 
 // ==================== 地點管理相關 ====================
@@ -85,10 +373,113 @@ function handleGetLocations() {
 }
 
 // ==================== 員工管理相關 ====================
-
-function handleGetAllUsers() {
-  return getAllUsers();
+/**
+ * 處理取得所有用戶
+ */
+function handleGetAllUsers(params) {
+  try {
+    Logger.log('📋 處理取得所有用戶請求');
+    
+    // 驗證 Session
+    if (!params.token || !validateSession(params.token)) {
+      return { ok: false, msg: "未授權或 session 已過期" };
+    }
+    
+    // 驗證管理員權限
+    const session = checkSession_(params.token);
+    if (!session.ok || !session.user || session.user.dept !== '管理員') {
+      return { ok: false, msg: '需要管理員權限' };
+    }
+    
+    const result = getAllUsers();
+    return result;
+    
+  } catch (error) {
+    Logger.log('❌ handleGetAllUsers 錯誤: ' + error);
+    return { ok: false, msg: error.message };
+  }
 }
+
+/**
+ * 處理更新用戶角色
+ */
+function handleUpdateUserRole(params) {
+  try {
+    Logger.log('📝 處理更新用戶角色請求');
+    
+    // 驗證 Session
+    if (!params.token || !validateSession(params.token)) {
+      return { ok: false, msg: "未授權或 session 已過期" };
+    }
+    
+    // 驗證管理員權限
+    const session = checkSession_(params.token);
+    if (!session.ok || !session.user || session.user.dept !== '管理員') {
+      return { ok: false, msg: '需要管理員權限' };
+    }
+    
+    const userId = params.userId;
+    const role = params.role;  // 'admin' 或 'employee'
+    
+    if (!userId || !role) {
+      return { ok: false, msg: '缺少必要參數' };
+    }
+    
+    // 不能改自己
+    if (userId === session.user.userId) {
+      return { ok: false, msg: '不能修改自己的角色' };
+    }
+    
+    const result = updateUserRole(userId, role);
+    return result;
+    
+  } catch (error) {
+    Logger.log('❌ handleUpdateUserRole 錯誤: ' + error);
+    return { ok: false, msg: error.message };
+  }
+}
+
+/**
+ * 處理刪除用戶
+ */
+function handleDeleteUser(params) {
+  try {
+    Logger.log('🗑️ 處理刪除用戶請求');
+    
+    // 驗證 Session
+    if (!params.token || !validateSession(params.token)) {
+      return { ok: false, msg: "未授權或 session 已過期" };
+    }
+    
+    // 驗證管理員權限
+    const session = checkSession_(params.token);
+    if (!session.ok || !session.user || session.user.dept !== '管理員') {
+      return { ok: false, msg: '需要管理員權限' };
+    }
+    
+    const userId = params.userId;
+    
+    if (!userId) {
+      return { ok: false, msg: '缺少用戶 ID' };
+    }
+    
+    // 不能刪除自己
+    if (userId === session.user.userId) {
+      return { ok: false, msg: '不能刪除自己' };
+    }
+    
+    const result = deleteUser(userId);
+    return result;
+    
+  } catch (error) {
+    Logger.log('❌ handleDeleteUser 錯誤: ' + error);
+    return { ok: false, msg: error.message };
+  }
+}
+
+// function handleGetAllUsers() {
+//   return getAllUsers();
+// }
 
 // ==================== 審核功能相關 ====================
 
@@ -113,19 +504,6 @@ function handleRejectReview(params) {
 }
 
 // ==================== 加班功能相關 ====================
-
-function handleSubmitOvertime(params) {
-  const { token, overtimeDate, startTime, endTime, hours, reason } = params;
-  Logger.log(`收到加班申請: 日期=${overtimeDate}, 開始=${startTime}, 結束=${endTime}, 時數=${hours}`);
-  return submitOvertimeRequest(
-    token, 
-    overtimeDate, 
-    startTime, 
-    endTime, 
-    parseFloat(hours), 
-    reason
-  );
-}
 
 function handleGetEmployeeOvertime(params) {
   Logger.log(`查詢員工加班記錄`);
@@ -159,11 +537,21 @@ function handleGetLeaveBalance(params) {
   return getLeaveBalance(params.token);
 }
 
+// function handleSubmitLeave(params) {
+//   const { token, leaveType, startDate, endDate, days, reason } = params;
+//   return submitLeaveRequest(token, leaveType, startDate, endDate, parseFloat(days), reason);
+// }
 function handleSubmitLeave(params) {
-  const { token, leaveType, startDate, endDate, days, reason } = params;
-  return submitLeaveRequest(token, leaveType, startDate, endDate, parseFloat(days), reason);
+  const { token, leaveType, startDateTime, endDateTime, reason } = params;
+  
+  return submitLeaveRequest(
+    token,
+    leaveType,
+    startDateTime,  // 現在是完整的日期時間
+    endDateTime,    // 現在是完整的日期時間
+    reason
+  );
 }
-
 function handleGetEmployeeLeaveRecords(params) {
   return getEmployeeLeaveRecords(params.token);
 }
@@ -574,7 +962,7 @@ function handleSetEmployeeSalaryTW(params) {
     Logger.log('   伙食費: ' + salaryData.mealAllowance);
     Logger.log('   交通補助: ' + salaryData.transportAllowance);
     Logger.log('   全勤獎金: ' + salaryData.attendanceBonus);
-    Logger.log('   績效獎金: ' + salaryData.performanceBonus);
+    Logger.log('   業績獎金: ' + salaryData.performanceBonus);
     Logger.log('   其他津貼: ' + salaryData.otherAllowances);
     Logger.log('   銀行代碼: ' + salaryData.bankCode);
     Logger.log('   銀行帳號: ' + salaryData.bankAccount);
@@ -587,15 +975,6 @@ function handleSetEmployeeSalaryTW(params) {
     if (!salaryData.employeeId || !salaryData.employeeName || salaryData.baseSalary <= 0) {
       Logger.log('❌ 必填欄位驗證失敗');
       return { ok: false, msg: "必填欄位不完整或無效" };
-    }
-    
-    // 驗證最低薪資
-    if (salaryData.salaryType === '月薪' && salaryData.baseSalary < 28590) {
-      return { ok: false, msg: "月薪不得低於 28,590 元（2025年基本工資）" };
-    }
-    
-    if (salaryData.salaryType === '時薪' && salaryData.baseSalary < 190) {
-      return { ok: false, msg: "時薪不得低於 190 元（2025年基本工資）" };
     }
     
     Logger.log('💾 開始儲存薪資設定...');
@@ -1775,17 +2154,304 @@ function handleInitApp(params) {
     const records = getAttendanceRecords(month, userId);
     const abnormalResults = checkAttendanceAbnormal(records);
     
-    // 3. 返回合併結果
+    // 👇 3. 取得加班記錄（新增）
+    const overtimeRecords = getApprovedOvertimeRecords(userId, month);
+    
+    // 👇 4. 將加班記錄加入異常記錄陣列
+    overtimeRecords.forEach(ot => {
+      abnormalResults.push({
+        date: ot.date,
+        reason: 'STATUS_OVERTIME_APPROVED',
+        punchTypes: null,
+        overtime: {
+          startTime: ot.startTime,
+          endTime: ot.endTime,
+          hours: ot.hours,
+          reason: ot.reason
+        }
+      });
+    });
+    
+    // 5. 返回合併結果
     return {
       ok: true,
       user: session.user,
       code: session.code,
       params: session.params,
-      abnormalRecords: abnormalResults
+      abnormalRecords: abnormalResults  // 現在包含打卡異常 + 加班記錄
     };
     
   } catch (error) {
     Logger.log('❌ handleInitApp 錯誤: ' + error);
     return { ok: false, code: "INTERNAL_ERROR", msg: error.message };
+  }
+}
+// function handleInitApp(params) {
+//   try {
+//     const sessionToken = params.token;
+    
+//     if (!sessionToken) {
+//       return { ok: false, code: "MISSING_SESSION_TOKEN" };
+//     }
+    
+//     // 1. 檢查 Session
+//     const session = checkSession_(sessionToken);
+    
+//     if (!session.ok) {
+//       return { ok: false, code: session.code };
+//     }
+    
+//     // 2. 取得異常記錄
+//     const now = new Date();
+//     const month = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0");
+//     const userId = session.user.userId;
+    
+//     const records = getAttendanceRecords(month, userId);
+//     const abnormalResults = checkAttendanceAbnormal(records);
+    
+//     // 3. 返回合併結果
+//     return {
+//       ok: true,
+//       user: session.user,
+//       code: session.code,
+//       params: session.params,
+//       abnormalRecords: abnormalResults
+//     };
+    
+//   } catch (error) {
+//     Logger.log('❌ handleInitApp 錯誤: ' + error);
+//     return { ok: false, code: "INTERNAL_ERROR", msg: error.message };
+//   }
+// }
+
+
+/**
+ * 處理取得員工月度打卡分析資料
+ */
+function handleGetEmployeeMonthlyPunchData(params) {
+  try {
+    if (!params.token || !validateSession(params.token)) {
+      return { ok: false, msg: "未授權或 session 已過期" };
+    }
+    
+    // 驗證管理員權限
+    const session = checkSession_(params.token);
+    if (!session.ok || session.user.dept !== '管理員') {
+      return { ok: false, msg: "需要管理員權限" };
+    }
+    
+    if (!params.employeeId || !params.yearMonth) {
+      return { ok: false, msg: "缺少必要參數" };
+    }
+    
+    const result = getEmployeeMonthlyPunchData(params.employeeId, params.yearMonth);
+    
+    return {
+      ok: result.success,
+      data: result.data,
+      msg: result.message || '查詢成功',
+      employeeId: result.employeeId,
+      yearMonth: result.yearMonth,
+      totalDays: result.totalDays
+    };
+    
+  } catch (error) {
+    Logger.log('❌ handleGetEmployeeMonthlyPunchData 錯誤: ' + error);
+    return { ok: false, msg: error.message };
+  }
+}
+
+
+/**
+ * ✅ 取得員工本月打卡記錄（前端專用）
+ */
+function handleGetEmployeeMonthlyAttendance(params) {
+  try {
+    const employee = checkSession_(params.token);
+    const user = employee.user;
+    if (!user) return { ok: false, code: "ERR_SESSION_INVALID" };
+    
+    const yearMonth = params.yearMonth;
+    if (!yearMonth) {
+      return { ok: false, message: "缺少年月參數" };
+    }
+    
+    Logger.log(`📋 員工 ${user.name} 查詢 ${yearMonth} 打卡記錄`);
+    
+    const records = getEmployeeMonthlyAttendance(user.userId, yearMonth);
+    
+    return {
+      ok: true,
+      records: records
+    };
+    
+  } catch (error) {
+    Logger.log("❌ 取得打卡記錄失敗: " + error);
+    return { ok: false, message: error.toString() };
+  }
+}
+
+/**
+ * ✅ 取得員工本月加班記錄（前端專用）
+ */
+function handleGetEmployeeMonthlyOvertime(params) {
+  try {
+    const employee = checkSession_(params.token);
+    const user = employee.user;
+    if (!user) return { ok: false, code: "ERR_SESSION_INVALID" };
+    
+    const yearMonth = params.yearMonth;
+    if (!yearMonth) {
+      return { ok: false, message: "缺少年月參數" };
+    }
+    
+    Logger.log(`📋 員工 ${user.name} 查詢 ${yearMonth} 加班記錄`);
+    
+    const records = getEmployeeMonthlyOvertime(user.userId, yearMonth);
+    
+    return {
+      ok: true,
+      records: records
+    };
+    
+  } catch (error) {
+    Logger.log("❌ 取得加班記錄失敗: " + error);
+    return { ok: false, message: error.toString() };
+  }
+}
+
+/**
+ * 取得所有公告
+ */
+function handleGetAnnouncements(params) {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    let sheet = ss.getSheetByName('公告');
+    
+    // 如果工作表不存在,建立它
+    if (!sheet) {
+      sheet = ss.insertSheet('公告');
+      sheet.appendRow(['ID', '標題', '內容', '優先級', '建立時間']);
+    }
+    
+    const data = sheet.getDataRange().getValues();
+    const announcements = [];
+    
+    // 跳過標題列
+    for (let i = 1; i < data.length; i++) {
+      announcements.push({
+        id: data[i][0],
+        title: data[i][1],
+        content: data[i][2],
+        priority: data[i][3],
+        createdAt: data[i][4]
+      });
+    }
+    
+    // 按時間排序 (最新在前)
+    announcements.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    
+    return { ok: true, announcements: announcements };
+    
+  } catch (error) {
+    return { ok: false, msg: error.toString() };
+  }
+}
+
+/**
+ * 新增公告 (僅管理員)
+ */
+function handleAddAnnouncement(params) {
+  try {
+    // ✅ 驗證管理員權限
+    const user = getUserByToken(params.token);
+    if (!user || user.dept !== '管理員') {
+      return { ok: false, msg: '無權限' };
+    }
+    
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    let sheet = ss.getSheetByName('公告');
+    
+    if (!sheet) {
+      sheet = ss.insertSheet('公告');
+      sheet.appendRow(['ID', '標題', '內容', '優先級', '建立時間']);
+    }
+    
+    const id = Date.now().toString();
+    const title = params.title;
+    const content = params.content;
+    const priority = params.priority || 'normal';
+    const createdAt = new Date().toISOString();
+    
+    sheet.appendRow([id, title, content, priority, createdAt]);
+    
+    return {
+      ok: true,
+      announcement: { id, title, content, priority, createdAt }
+    };
+    
+  } catch (error) {
+    return { ok: false, msg: error.toString() };
+  }
+}
+/**
+ * 刪除公告 (僅管理員) - 修正版
+ */
+function handleDeleteAnnouncement(params) {
+  try {
+    Logger.log('═══════════════════════════════════════');
+    Logger.log('🗑️ 開始刪除公告');
+    Logger.log('   收到的 ID: ' + params.id);
+    Logger.log('   ID 型別: ' + typeof params.id);
+    
+    const user = getUserByToken(params.token);
+    if (!user || user.dept !== '管理員') {
+      Logger.log('❌ 無權限');
+      return { ok: false, msg: '無權限' };
+    }
+    
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheet = ss.getSheetByName('公告');
+    
+    if (!sheet) {
+      Logger.log('❌ 工作表不存在');
+      return { ok: false, msg: '工作表不存在' };
+    }
+    
+    const data = sheet.getDataRange().getValues();
+    const announcementId = String(params.id);  // ⭐⭐⭐ 強制轉為字串
+    
+    Logger.log('   轉換後的 ID: ' + announcementId);
+    Logger.log('   工作表總行數: ' + data.length);
+    Logger.log('');
+    
+    // 找到對應的列
+    for (let i = 1; i < data.length; i++) {
+      const rowId = String(data[i][0]);  // ⭐⭐⭐ 也轉為字串
+      
+      Logger.log(`   檢查第 ${i + 1} 行: ID = "${rowId}"`);
+      
+      if (rowId === announcementId) {
+        Logger.log(`   ✅ 找到匹配！刪除第 ${i + 1} 行`);
+        sheet.deleteRow(i + 1);
+        Logger.log('═══════════════════════════════════════');
+        return { ok: true, msg: '公告已刪除' };
+      }
+    }
+    
+    Logger.log('   ❌ 沒有找到匹配的 ID');
+    Logger.log('');
+    Logger.log('📋 工作表中所有的 ID:');
+    for (let i = 1; i < data.length; i++) {
+      Logger.log(`   - "${data[i][0]}" (${typeof data[i][0]})`);
+    }
+    Logger.log('═══════════════════════════════════════');
+    
+    return { ok: false, msg: '找不到公告' };
+    
+  } catch (error) {
+    Logger.log('❌ 錯誤: ' + error);
+    Logger.log('═══════════════════════════════════════');
+    return { ok: false, msg: error.toString() };
   }
 }
