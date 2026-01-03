@@ -11,7 +11,7 @@ let weekShiftCache = null;  // 快取本週排班
 // 載入語系檔
 async function loadTranslations(lang) {
     try {
-        const res = await fetch(`https://eric693.github.io/check_manager_v2/i18n/${lang}.json`);
+        const res = await fetch(`https://eric693.github.io/Allianz_check_manager/i18n/${lang}.json`);
         if (!res.ok) {
             throw new Error(`HTTP 錯誤: ${res.status}`);
         }
@@ -2261,7 +2261,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     logoutBtn.onclick = () => {
         localStorage.removeItem("sessionToken");
-        window.location.href = "/check_manager_v2"
+        window.location.href = "/Allianz_check_manager"
     };
     
     /* ===== 打卡功能 ===== */
@@ -2638,10 +2638,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // 👇 加入公告事件綁定
+    // 在 DOMContentLoaded 中修改
     const submitAnnouncementBtn = document.getElementById('submit-announcement-btn');
     if (submitAnnouncementBtn) {
-        submitAnnouncementBtn.addEventListener('click', () => {
+        submitAnnouncementBtn.addEventListener('click', async () => {
             const title = document.getElementById('announcement-title').value.trim();
             const content = document.getElementById('announcement-content').value.trim();
             const priority = document.getElementById('announcement-priority').value;
@@ -2651,26 +2651,29 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
             
-            const announcements = loadAnnouncements();
-            const newAnnouncement = {
-                id: Date.now().toString(),
-                title: title,
-                content: content,
-                priority: priority,
-                createdAt: new Date().toISOString()
-            };
-            
-            announcements.unshift(newAnnouncement);
-            saveAnnouncements(announcements);
-            
-            document.getElementById('announcement-title').value = '';
-            document.getElementById('announcement-content').value = '';
-            document.getElementById('announcement-priority').value = 'normal';
-            
-            displayAdminAnnouncements();
-            displayAnnouncements();
-            
-            showNotification('公告發布成功！', 'success');
+            try {
+                const res = await callApifetch(
+                    `addAnnouncement&title=${encodeURIComponent(title)}&content=${encodeURIComponent(content)}&priority=${priority}`
+                );
+                
+                if (res.ok) {
+                    document.getElementById('announcement-title').value = '';
+                    document.getElementById('announcement-content').value = '';
+                    document.getElementById('announcement-priority').value = 'normal';
+                    
+                    showNotification('公告發布成功！', 'success');
+                    
+                    // 重新載入公告列表
+                    await displayAdminAnnouncements();
+                    await displayAnnouncements();
+                } else {
+                    showNotification(res.msg || '發布失敗', 'error');
+                }
+                
+            } catch (error) {
+                console.error('發布公告失敗:', error);
+                showNotification('發布失敗', 'error');
+            }
         });
     }
     displayAnnouncements();
@@ -2894,16 +2897,6 @@ function clearShiftCache() {
 }
 
 // ==================== 📢 佈告欄功能 ====================
-
-function  loadAnnouncements() {
-    const data = localStorage.getItem('announcements');
-    return data ? JSON.parse(data) : [];
-}
-
-function saveAnnouncements(announcements) {
-    localStorage.setItem('announcements', JSON.stringify(announcements));
-}
-
 function displayAnnouncements() {
     const list = document.getElementById('announcements-list');
     const empty = document.getElementById('announcements-empty');
@@ -4104,5 +4097,124 @@ async function saveNewName(userId) {
     } catch (error) {
         console.error('更新姓名失敗:', error);
         showNotification('更新失敗，請稍後再試', 'error');
+    }
+}
+
+// ==================== 📢 佈告欄功能 (改用後端) ====================
+
+/**
+ * 載入公告 (從後端)
+ */
+async function loadAnnouncements() {
+    try {
+        const res = await callApifetch('getAnnouncements');
+        
+        if (res.ok) {
+            return res.announcements || [];
+        }
+        
+        return [];
+        
+    } catch (error) {
+        console.error('載入公告失敗:', error);
+        return [];
+    }
+}
+
+/**
+ * 顯示公告 (儀表板)
+ */
+async function displayAnnouncements() {
+    const list = document.getElementById('announcements-list');
+    const empty = document.getElementById('announcements-empty');
+    
+    if (!list) return;
+    
+    const announcements = await loadAnnouncements();
+    const displayAnnouncements = announcements.slice(0, 3); // 只顯示前 3 筆
+    
+    if (displayAnnouncements.length === 0) {
+        if (empty) empty.style.display = 'block';
+        list.innerHTML = '';
+        return;
+    }
+    
+    if (empty) empty.style.display = 'none';
+    list.innerHTML = '';
+    
+    displayAnnouncements.forEach(a => {
+        const icon = a.priority === 'high' ? '🔴' : a.priority === 'medium' ? '🟡' : '🔵';
+        const div = document.createElement('div');
+        div.className = 'bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 mb-3';
+        div.innerHTML = `
+            <div class="flex items-start justify-between mb-2">
+                <h3 class="font-bold text-gray-800 dark:text-white">${icon} ${a.title}</h3>
+                <span class="text-xs text-gray-500">${new Date(a.createdAt).toLocaleDateString()}</span>
+            </div>
+            <p class="text-sm text-gray-600 dark:text-gray-300">${a.content}</p>
+        `;
+        list.appendChild(div);
+    });
+}
+
+/**
+ * 顯示管理員公告列表
+ */
+async function displayAdminAnnouncements() {
+    const list = document.getElementById('admin-announcements-list');
+    if (!list) return;
+    
+    const announcements = await loadAnnouncements();
+    list.innerHTML = '';
+    
+    if (announcements.length === 0) {
+        list.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center py-4">目前沒有公告</p>';
+        return;
+    }
+    
+    announcements.forEach(a => {
+        const div = document.createElement('div');
+        div.className = 'bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700';
+        div.innerHTML = `
+            <div class="flex justify-between items-start">
+                <div class="flex-1">
+                    <h3 class="font-bold text-gray-800 dark:text-white mb-1">${a.title}</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-300 mb-2">${a.content}</p>
+                    <span class="text-xs text-gray-500">${new Date(a.createdAt).toLocaleString()}</span>
+                </div>
+                <button class="px-3 py-1 text-sm bg-red-500 hover:bg-red-600 text-white rounded ml-4" 
+                        data-i18n="BTN_DELETE"
+                        onclick="deleteAnnouncement('${a.id}')">
+                    刪除
+                </button>
+            </div>
+        `;
+        list.appendChild(div);
+        renderTranslations(div);
+    });
+}
+
+/**
+ * 刪除公告
+ */
+async function deleteAnnouncement(id) {
+    if (!confirm(t('DELETE_ANNOUNCEMENT_CONFIRM') || '確定要刪除此公告嗎？')) {
+        return;
+    }
+    
+    try {
+        const res = await callApifetch(`deleteAnnouncement&id=${id}`);
+        
+        if (res.ok) {
+            showNotification(t('ANNOUNCEMENT_DELETED') || '公告已刪除', 'success');
+            displayAdminAnnouncements();
+            displayAnnouncements();
+        } else {
+            showNotification(res.msg || '刪除失敗', 'error');
+        }
+        
+    } catch (error) {
+        console.error('刪除公告失敗:', error);
+        showNotification('刪除失敗', 'error');
     }
 }
