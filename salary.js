@@ -1178,39 +1178,72 @@ function displaySalaryCalculation(data, container) {
 }
 
 /**
- * ✅ 儲存薪資記錄
+ * ✅ 儲存薪資記錄（修正版 - 包含所有必要欄位）
  */
 async function saveSalaryRecord(data) {
     try {
         showNotification(t('SALARY_SAVING_RECORD'), 'info');
         
+        // ⭐⭐⭐ 修正：加入完整的欄位（特別是 salaryType, hourlyRate, totalWorkHours）
         const queryString = 
             `employeeId=${encodeURIComponent(data.employeeId)}` +
             `&employeeName=${encodeURIComponent(data.employeeName)}` +
             `&yearMonth=${encodeURIComponent(data.yearMonth)}` +
+            
+            // ⭐ 新增：薪資類型相關欄位
+            `&salaryType=${encodeURIComponent(data.salaryType || '月薪')}` +
+            `&hourlyRate=${encodeURIComponent(data.hourlyRate || 0)}` +
+            `&totalWorkHours=${encodeURIComponent(data.totalWorkHours || 0)}` +
+            `&totalOvertimeHours=${encodeURIComponent(data.totalOvertimeHours || 0)}` +
+            
+            // 應發項目
             `&baseSalary=${encodeURIComponent(data.baseSalary)}` +
             `&positionAllowance=${encodeURIComponent(data.positionAllowance || 0)}` +
             `&mealAllowance=${encodeURIComponent(data.mealAllowance || 0)}` +
             `&transportAllowance=${encodeURIComponent(data.transportAllowance || 0)}` +
             `&attendanceBonus=${encodeURIComponent(data.attendanceBonus || 0)}` +
             `&performanceBonus=${encodeURIComponent(data.performanceBonus || 0)}` +
+            `&otherAllowances=${encodeURIComponent(data.otherAllowances || 0)}` +
+            
+            // ⭐ 修正：加班費（三種）
             `&weekdayOvertimePay=${encodeURIComponent(data.weekdayOvertimePay || 0)}` +
             `&restdayOvertimePay=${encodeURIComponent(data.restdayOvertimePay || 0)}` +
             `&holidayOvertimePay=${encodeURIComponent(data.holidayOvertimePay || 0)}` +
+            
+            // 法定扣款
             `&laborFee=${encodeURIComponent(data.laborFee || 0)}` +
             `&healthFee=${encodeURIComponent(data.healthFee || 0)}` +
             `&employmentFee=${encodeURIComponent(data.employmentFee || 0)}` +
             `&pensionSelf=${encodeURIComponent(data.pensionSelf || 0)}` +
+            `&pensionSelfRate=${encodeURIComponent(data.pensionSelfRate || 0)}` +
             `&incomeTax=${encodeURIComponent(data.incomeTax || 0)}` +
+            
+            // 其他扣款
             `&leaveDeduction=${encodeURIComponent(data.leaveDeduction || 0)}` +
             `&welfareFee=${encodeURIComponent(data.welfareFee || 0)}` +
             `&dormitoryFee=${encodeURIComponent(data.dormitoryFee || 0)}` +
             `&groupInsurance=${encodeURIComponent(data.groupInsurance || 0)}` +
             `&otherDeductions=${encodeURIComponent(data.otherDeductions || 0)}` +
+            
+            // 總計
             `&grossSalary=${encodeURIComponent(data.grossSalary)}` +
             `&netSalary=${encodeURIComponent(data.netSalary)}` +
+            
+            // 銀行資訊
             `&bankCode=${encodeURIComponent(data.bankCode || '')}` +
-            `&bankAccount=${encodeURIComponent(data.bankAccount || '')}`;
+            `&bankAccount=${encodeURIComponent(data.bankAccount || '')}` +
+            
+            // 狀態
+            `&status=${encodeURIComponent(data.status || '已計算')}` +
+            `&note=${encodeURIComponent(data.note || '')}`;
+        
+        console.log('📤 儲存薪資記錄，包含參數:', {
+            employeeId: data.employeeId,
+            yearMonth: data.yearMonth,
+            salaryType: data.salaryType,  // ⭐ 確認有傳遞
+            hourlyRate: data.hourlyRate,
+            totalWorkHours: data.totalWorkHours
+        });
         
         const res = await callApifetch(`saveMonthlySalary&${queryString}`);
         
@@ -1218,7 +1251,6 @@ async function saveSalaryRecord(data) {
             showNotification(t('SALARY_RECORD_SAVED'), 'success');
         } else {
             showNotification(t('SALARY_SAVE_FAILED') + ': ' + (res.msg || t('UNKNOWN_ERROR')), 'error');
-
         }
         
     } catch (error) {
