@@ -1469,10 +1469,10 @@ function getEmployeeMonthlyAttendanceInternal(employeeId, yearMonth) {
           
           if (diffMs > 0) {
             const totalHours = diffMs / (1000 * 60 * 60);
-            const lunchBreak = 1;
-            // workHours = Math.max(0, totalHours - lunchBreak);
-            workHours = Math.floor(Math.max(0, totalHours - lunchBreak));
-            Logger.log(`   ${date}: ${punchIn} ~ ${punchOut} = ${workHours.toFixed(2)}h (原始: ${totalHours.toFixed(2)}h)`);
+            // 只有工作超過 4 小時才扣午休 1 小時（避免半天班被多扣）
+            const lunchBreak = totalHours >= 4 ? 1 : 0;
+            workHours = Math.max(0, totalHours - lunchBreak);
+            Logger.log(`   ${date}: ${punchIn} ~ ${punchOut} = ${workHours.toFixed(2)}h (原始: ${totalHours.toFixed(2)}h, 午休: ${lunchBreak}h)`);
           } else {
             Logger.log(`   ⚠️ ${date}: ${punchIn} ~ ${punchOut} 時間異常（下班早於上班）`);
           }

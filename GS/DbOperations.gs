@@ -612,6 +612,14 @@ function punchAdjusted(sessionToken, type, punchDate, lat, lng, note) {
     return { ok: false, code: "ERR_SESSION_INVALID" };
   }
 
+  // 禁止補打假日（週六、週日）
+  const targetDay = new Date(punchDate).getDay();
+  if (targetDay === 0 || targetDay === 6) {
+    const dayName = targetDay === 0 ? '週日（例假日）' : '週六（休息日）';
+    Logger.log(`❌ 禁止補打 ${dayName}`);
+    return { ok: false, code: "ERR_HOLIDAY_PUNCH", msg: `${dayName}不允許補打卡，如有特殊情形請聯繫管理員` };
+  }
+
   // ⭐ 修改：寫入「補打卡申請」工作表，而不是「出勤紀錄」
   const sh = SpreadsheetApp.getActive().getSheetByName(SHEET_ADJUST_PUNCH);
   

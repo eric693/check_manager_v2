@@ -262,6 +262,58 @@ function replyHelpMessage(replyToken) {
 }
 
 /**
+ * 回覆補打卡說明
+ */
+function replyAdjustPunchGuide(replyToken) {
+  const message = {
+    type: 'text',
+    text: `📝 補打卡申請說明\n\n請至網頁系統進行補打卡申請：\n1. 登入出勤管理系統\n2. 點選「補打卡申請」\n3. 填寫補打日期、時間、類型及原因\n4. 送出後等待主管審核\n\n⚠️ 注意：假日（週六、週日）及國定假日無法補打卡`
+  };
+  sendLineReply_(replyToken, [message]);
+}
+
+/**
+ * 回覆打卡記錄查詢
+ */
+function replyPunchRecords(replyToken, userId) {
+  try {
+    const employee = findEmployeeByLineUserId_(userId);
+    if (!employee || !employee.ok) {
+      replyMessage(replyToken, '❌ 找不到您的員工資料，請先完成註冊！');
+      return;
+    }
+
+    const now = new Date();
+    const yearMonth = Utilities.formatDate(now, 'Asia/Taipei', 'yyyy-MM');
+    const sh = SpreadsheetApp.getActive().getSheetByName(SHEET_ATTENDANCE);
+    const values = sh.getDataRange().getValues().slice(1);
+
+    const records = values.filter(row => {
+      if (!row[0] || row[1] !== userId) return false;
+      const d = new Date(row[0]);
+      const ym = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+      return ym === yearMonth;
+    });
+
+    if (records.length === 0) {
+      replyMessage(replyToken, `📋 ${yearMonth} 本月尚無打卡記錄`);
+      return;
+    }
+
+    const lines = records.slice(-10).map(r => {
+      const time = Utilities.formatDate(new Date(r[0]), 'Asia/Taipei', 'MM/dd HH:mm');
+      return `${time} ${r[4]}`;
+    });
+
+    const text = `📋 ${employee.name} 最近打卡記錄（最多10筆）\n\n` + lines.join('\n');
+    replyMessage(replyToken, text);
+  } catch (e) {
+    Logger.log('❌ replyPunchRecords 錯誤: ' + e);
+    replyMessage(replyToken, '❌ 查詢打卡記錄失敗，請稍後再試');
+  }
+}
+
+/**
  * 發送 LINE 回覆訊息
  */
 function sendLineReply_(replyToken, messages) {

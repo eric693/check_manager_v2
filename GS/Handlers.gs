@@ -178,11 +178,6 @@ function handleAdjustPunch(params) {
       return { ok: false, code: "ERR_MISSING_DATETIME", msg: "缺少日期時間" };
     }
     
-    if (!lat || !lng) {
-      Logger.log('❌ 缺少座標');
-      return { ok: false, code: "ERR_MISSING_LOCATION", msg: "缺少位置資訊" };
-    }
-    
     // ⭐⭐⭐ 關鍵驗證：理由長度
     if (!note || note.trim().length < 2) {
       Logger.log('❌ 理由不足 2 個字');
