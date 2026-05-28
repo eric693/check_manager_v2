@@ -318,12 +318,7 @@ function setEmployeeSalaryTW(salaryData) {
     }
 
     return { success: true, message: "薪資設定成功" };
-    // 同步到月薪資記錄
-    // const currentYearMonth = Utilities.formatDate(now, "Asia/Taipei", "yyyy-MM");
-    // syncSalaryToMonthlyRecord(salaryData.employeeId, currentYearMonth);
-    
-    // return { success: true, message: "薪資設定成功" };
-    
+
   } catch (error) {
     Logger.log("❌ 設定薪資失敗: " + error);
     Logger.log("❌ 錯誤堆疊: " + error.stack);
@@ -986,38 +981,50 @@ function getEmployeeMonthlySalary(employeeId, yearMonth) {
     }
     
     const values = sheet.getDataRange().getValues();
+    if (values.length < 2) return { success: true, data: [] };
+
+    // 動態欄位查找，防止請假紀錄工作表欄位順序異動
+    const headers = values[0];
+    const empIdIdx    = headers.findIndex(h => /員工.?ID/i.test(h));
+    const typeIdx     = headers.findIndex(h => /假別|假期類型|leaveType/i.test(h));
+    const startIdx    = headers.findIndex(h => /開始日期|起始日期|start/i.test(h));
+    const daysIdx     = headers.findIndex(h => /天數|請假天數|days/i.test(h));
+    const statusIdx   = headers.findIndex(h => /狀態|status/i.test(h));
+
+    if (empIdIdx === -1 || startIdx === -1 || statusIdx === -1) {
+      Logger.log(`⚠️ 請假記錄工作表缺少必要欄位 empId(${empIdIdx}) start(${startIdx}) status(${statusIdx})`);
+      return { success: true, data: [] };
+    }
+
     const records = [];
-    
+
     for (let i = 1; i < values.length; i++) {
       const row = values[i];
-      
-      if (!row[1] || !row[5]) continue;
-      
-      const rowEmployeeId = String(row[1]).trim();
-      const startDate = row[5];
-      
-      if (rowEmployeeId !== employeeId) continue;
-      
+      const rowEmployeeId = String(row[empIdIdx] || '').trim();
+      if (!rowEmployeeId || rowEmployeeId !== employeeId) continue;
+
+      const startDate = startIdx >= 0 ? row[startIdx] : null;
+      if (!startDate) continue;
+
       let dateStr = "";
       if (startDate instanceof Date) {
         dateStr = Utilities.formatDate(startDate, "Asia/Taipei", "yyyy-MM");
       } else if (typeof startDate === "string") {
         dateStr = startDate.substring(0, 7);
       }
-      
       if (dateStr !== yearMonth) continue;
-      
-      const status = String(row[9] || "").trim().toUpperCase();
+
+      const status = String(row[statusIdx] || "").trim().toUpperCase();
       if (status !== "APPROVED") continue;
-      
+
       records.push({
-        leaveType: row[4] || "",
+        leaveType: typeIdx >= 0 ? (row[typeIdx] || "") : "",
         startDate: startDate,
-        leaveDays: parseFloat(row[7]) || 0,
+        leaveDays: daysIdx >= 0 ? (parseFloat(row[daysIdx]) || 0) : 0,
         reviewStatus: "核准"
       });
     }
-    
+
     return { success: true, data: records };
     
   } catch (error) {
@@ -1157,22 +1164,30 @@ function calculateHourlySalary(employeeId, yearMonth) {
     Logger.log(`   - 休息日加班費: $${restdayOvertimePay}`);
     Logger.log(`   - 例假日加班費: $${holidayOvertimePay}`);
     
-    // 7. 固定津貼（時薪員工通常沒有，但保留欄位）
-    const positionAllowance = parseFloat(config['職務加給']) || 0;
-    const mealAllowance = parseFloat(config['伙食費']) || 0;
+    // 7. 固定津貼
+    const positionAllowance  = parseFloat(config['職務加給']) || 0;
+    const mealAllowance      = parseFloat(config['伙食費'])   || 0;
     const transportAllowance = parseFloat(config['交通補助']) || 0;
-    const attendanceBonus = parseFloat(config['全勤獎金']) || 0;
-    const performanceBonus = parseFloat(config['業績獎金']) || 0;
-    const otherAllowances = parseFloat(config['其他津貼']) || 0;
-    
+    let   attendanceBonus    = parseFloat(config['全勤獎金']) || 0;
+    const performanceBonus   = parseFloat(config['業績獎金']) || 0;
+    const otherAllowances    = parseFloat(config['其他津貼']) || 0;
+
+    // 7.5. 取得請假記錄 — 有請假則取消全勤獎金（與月薪計算邏輯一致）
+    const leaveRecordsH = getEmployeeMonthlySalary(employeeId, yearMonth);
+    const hasLeave = leaveRecordsH.success && leaveRecordsH.data && leaveRecordsH.data.length > 0;
+    if (hasLeave) {
+      Logger.log(`⚠️ 本月有請假記錄，取消全勤獎金 ($${attendanceBonus})`);
+      attendanceBonus = 0;
+    }
+
     Logger.log(`📋 固定津貼:`);
-    if (positionAllowance > 0) Logger.log(`   - 職務加給: $${positionAllowance}`);
-    if (mealAllowance > 0) Logger.log(`   - 伙食費: $${mealAllowance}`);
+    if (positionAllowance > 0)  Logger.log(`   - 職務加給: $${positionAllowance}`);
+    if (mealAllowance > 0)      Logger.log(`   - 伙食費: $${mealAllowance}`);
     if (transportAllowance > 0) Logger.log(`   - 交通補助: $${transportAllowance}`);
-    if (attendanceBonus > 0) Logger.log(`   - 全勤獎金: $${attendanceBonus}`);
-    if (performanceBonus > 0) Logger.log(`   - 業績獎金: $${performanceBonus}`);
-    if (otherAllowances > 0) Logger.log(`   - 其他津貼: $${otherAllowances}`);
-    
+    if (attendanceBonus > 0)    Logger.log(`   - 全勤獎金: $${attendanceBonus}`);
+    if (performanceBonus > 0)   Logger.log(`   - 業績獎金: $${performanceBonus}`);
+    if (otherAllowances > 0)    Logger.log(`   - 其他津貼: $${otherAllowances}`);
+
     // 8. 應發總額
     const grossSalary = basePay + 
                        positionAllowance + 
@@ -1187,36 +1202,34 @@ function calculateHourlySalary(employeeId, yearMonth) {
     
     Logger.log(`💵 應發總額: $${Math.round(grossSalary)}`);
     
-    // 9. 扣款項目（時薪若月薪未達基本工資，可能不需扣保險）
-    let laborFee = 0;
-    let healthFee = 0;
-    let employmentFee = 0;
-    let pensionSelf = 0;
-    let incomeTax = 0;
-    
-    // ⭐ 如果月總薪資達到基本工資，才扣保險
-    if (grossSalary >= 28590) {
-      const insuredSalary = getInsuredSalary(grossSalary);
-      laborFee = Math.round(insuredSalary * 0.115 * 0.2);
-      healthFee = Math.round(insuredSalary * 0.0517 * 0.3);
-      employmentFee = Math.round(insuredSalary * 0.01 * 0.2);
-      
-      const pensionSelfRate = parseFloat(config['勞退自提率(%)']) || 0;
-      pensionSelf = Math.round(insuredSalary * (pensionSelfRate / 100));
-      
-      if (grossSalary > 34000) {
-        incomeTax = Math.round((grossSalary - 34000) * 0.05);
+    // 9. 法定扣款：優先使用管理員在薪資設定中填寫的金額（與月薪計算一致）
+    //    若勞保費和健保費均為 0 表示未手動設定，才根據月總薪資自動試算
+    const pensionSelfRate = parseFloat(config['勞退自提率(%)']) || 0;
+    let laborFee     = parseFloat(config['勞保費'])     || 0;
+    let healthFee    = parseFloat(config['健保費'])     || 0;
+    let employmentFee = parseFloat(config['就業保險費']) || 0;
+    let pensionSelf  = parseFloat(config['勞退自提'])   || 0;
+    let incomeTax    = parseFloat(config['所得稅'])     || 0;
+
+    if (laborFee === 0 && healthFee === 0) {
+      // 管理員未手動設定 → 根據月薪自動計算
+      if (grossSalary >= 28590) {
+        const insuredSalary = getInsuredSalary(grossSalary);
+        laborFee      = Math.round(insuredSalary * 0.115 * 0.2);
+        healthFee     = Math.round(insuredSalary * 0.0517 * 0.3);
+        employmentFee = Math.round(insuredSalary * 0.01 * 0.2);
+        pensionSelf   = Math.round(insuredSalary * (pensionSelfRate / 100));
+        if (grossSalary > 34000) {
+          incomeTax = Math.round((grossSalary - 34000) * 0.05);
+        }
+        Logger.log(`📋 自動計算法定扣款 (月薪 $${Math.round(grossSalary)}, 投保薪資: $${insuredSalary})`);
+      } else {
+        Logger.log(`⚠️ 月薪未達基本工資 ($${Math.round(grossSalary)} < $28,590)，不自動扣保險`);
       }
-      
-      Logger.log(`📋 月薪達基本工資，計算法定扣款 (投保薪資: ${insuredSalary})`);
-      Logger.log(`   - 勞保費: $${laborFee}`);
-      Logger.log(`   - 健保費: $${healthFee}`);
-      Logger.log(`   - 就業保險費: $${employmentFee}`);
-      Logger.log(`   - 勞退自提 (${pensionSelfRate}%): $${pensionSelf}`);
-      Logger.log(`   - 所得稅: $${incomeTax}`);
     } else {
-      Logger.log(`⚠️ 月薪未達基本工資 ($${Math.round(grossSalary)} < $28,590)，不扣保險`);
+      Logger.log(`📋 使用管理員設定的保費（不自動試算）`);
     }
+    Logger.log(`   - 勞保費: $${laborFee}, 健保費: $${healthFee}, 就保: $${employmentFee}, 勞退自提: $${pensionSelf}, 所得稅: $${incomeTax}`);
     
     // 10. 其他扣款
     const welfareFee = parseFloat(config['福利金扣款']) || 0;
