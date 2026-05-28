@@ -483,28 +483,30 @@ function getEmployeeMonthlyOvertime(employeeId, yearMonth) {
     
     const headers = data[0];
     Logger.log('📊 加班申請欄位: ' + headers.join(', '));
-    
-    // ⭐ 根據實際欄位結構定義索引
-    const userIdIndex = 1;      // 員工ID
-    const dateIndex = 3;        // 加班日期
-    const hoursIndex = 6;       // 加班時數
-    const statusIndex = 9;      // 審核狀態
-    
-    Logger.log('🔍 使用欄位索引:');
-    Logger.log('   員工ID: ' + userIdIndex);
-    Logger.log('   加班日期: ' + dateIndex);
-    Logger.log('   加班時數: ' + hoursIndex);
-    Logger.log('   審核狀態: ' + statusIndex);
-    
+
+    // 動態查找欄位索引，避免欄位順序異動造成錯誤
+    const userIdIndex   = headers.findIndex(h => /員工.?ID/i.test(h));
+    const dateIndex     = headers.findIndex(h => /加班日期/.test(h));
+    const hoursIndex    = headers.findIndex(h => /加班時數/.test(h));
+    const statusIndex   = headers.findIndex(h => /審核狀態|狀態/.test(h));
+
+    if (userIdIndex === -1 || dateIndex === -1 || hoursIndex === -1 || statusIndex === -1) {
+      Logger.log(`⚠️ 加班申請工作表缺少必要欄位，無法計算加班費`);
+      Logger.log(`   員工ID(${userIdIndex}) 加班日期(${dateIndex}) 加班時數(${hoursIndex}) 狀態(${statusIndex})`);
+      return [];
+    }
+
+    Logger.log(`🔍 動態欄位索引 — 員工ID:${userIdIndex} 日期:${dateIndex} 時數:${hoursIndex} 狀態:${statusIndex}`);
+
     const records = [];
-    
+
     for (let i = 1; i < data.length; i++) {
       const row = data[i];
-      
+
       const rowUserId = String(row[userIdIndex] || '').trim();
-      const date = row[dateIndex];
-      const hours = row[hoursIndex];
-      const status = String(row[statusIndex] || '').trim().toLowerCase();
+      const date      = row[dateIndex];
+      const hours     = row[hoursIndex];
+      const status    = String(row[statusIndex] || '').trim().toLowerCase();
       
       // 檢查員工ID
       if (rowUserId !== employeeId) continue;
@@ -597,57 +599,59 @@ function saveMonthlySalary(salaryData) {
     Logger.log(`   - 最終值: "${salaryType}"`);
     Logger.log(`   - 資料來源: ${JSON.stringify(Object.keys(salaryData))}`);
     
+    // 輔助函數：優先取英文 key，fallback 中文 key，0 是合法值不能跳過
+    const n = (eng, zhKey) => (eng ?? salaryData[zhKey]) ?? 0;
+    const s = (eng, zhKey, def) => (eng ?? salaryData[zhKey]) ?? def ?? "";
+
     const row = [
       // 基本資訊
       salaryId,
-      salaryData.employeeId || salaryData['員工ID'],
-      salaryData.employeeName || salaryData['員工姓名'],
+      s(salaryData.employeeId, '員工ID', ''),
+      s(salaryData.employeeName, '員工姓名', ''),
       normalizedYearMonth,
-      
-      // ⭐⭐⭐ 使用處理後的 salaryType 變數
+
       salaryType,
-      
-      salaryData.hourlyRate || salaryData['時薪'] || 0,
-      salaryData.totalWorkHours || salaryData['工作時數'] || 0,
-      salaryData.totalOvertimeHours || salaryData['總加班時數'] || 0,
-      
-      // ... 其餘欄位保持不變
-      salaryData.baseSalary || salaryData['基本薪資'] || 0,
-      salaryData.positionAllowance || salaryData['職務加給'] || 0,
-      salaryData.mealAllowance || salaryData['伙食費'] || 0,
-      salaryData.transportAllowance || salaryData['交通補助'] || 0,
-      salaryData.attendanceBonus || salaryData['全勤獎金'] || 0,
-      salaryData.performanceBonus || salaryData['業績獎金'] || 0,
-      salaryData.otherAllowances || salaryData['其他津貼'] || 0,
-      salaryData.weekdayOvertimePay || salaryData['平日加班費'] || 0,
-      salaryData.restdayOvertimePay || salaryData['休息日加班費'] || 0,
-      salaryData.holidayOvertimePay || salaryData['國定假日加班費'] || 0,
-      
+
+      n(salaryData.hourlyRate, '時薪'),
+      n(salaryData.totalWorkHours, '工作時數'),
+      n(salaryData.totalOvertimeHours, '總加班時數'),
+
+      n(salaryData.baseSalary, '基本薪資'),
+      n(salaryData.positionAllowance, '職務加給'),
+      n(salaryData.mealAllowance, '伙食費'),
+      n(salaryData.transportAllowance, '交通補助'),
+      n(salaryData.attendanceBonus, '全勤獎金'),
+      n(salaryData.performanceBonus, '業績獎金'),
+      n(salaryData.otherAllowances, '其他津貼'),
+      n(salaryData.weekdayOvertimePay, '平日加班費'),
+      n(salaryData.restdayOvertimePay, '休息日加班費'),
+      n(salaryData.holidayOvertimePay, '國定假日加班費'),
+
       // 法定扣款
-      salaryData.laborFee || salaryData['勞保費'] || 0,
-      salaryData.healthFee || salaryData['健保費'] || 0,
-      salaryData.employmentFee || salaryData['就業保險費'] || 0,
-      salaryData.pensionSelf || salaryData['勞退自提'] || 0,
-      salaryData.incomeTax || salaryData['所得稅'] || 0,
-      
+      n(salaryData.laborFee, '勞保費'),
+      n(salaryData.healthFee, '健保費'),
+      n(salaryData.employmentFee, '就業保險費'),
+      n(salaryData.pensionSelf, '勞退自提'),
+      n(salaryData.incomeTax, '所得稅'),
+
       // 其他扣款
-      salaryData.leaveDeduction || salaryData['請假扣款'] || 0,
-      salaryData.welfareFee || salaryData['福利金扣款'] || 0,
-      salaryData.dormitoryFee || salaryData['宿舍費用'] || 0,
-      salaryData.groupInsurance || salaryData['團保費用'] || 0,
-      salaryData.otherDeductions || salaryData['其他扣款'] || 0,
-      
+      n(salaryData.leaveDeduction, '請假扣款'),
+      n(salaryData.welfareFee, '福利金扣款'),
+      n(salaryData.dormitoryFee, '宿舍費用'),
+      n(salaryData.groupInsurance, '團保費用'),
+      n(salaryData.otherDeductions, '其他扣款'),
+
       // 總計
-      salaryData.grossSalary || salaryData['應發總額'] || 0,
-      salaryData.netSalary || salaryData['實發金額'] || 0,
-      
+      n(salaryData.grossSalary, '應發總額'),
+      n(salaryData.netSalary, '實發金額'),
+
       // 銀行資訊
-      salaryData.bankCode || salaryData['銀行代碼'] || "",
-      salaryData.bankAccount || salaryData['銀行帳號'] || "",
-      
+      s(salaryData.bankCode, '銀行代碼', ''),
+      s(salaryData.bankAccount, '銀行帳號', ''),
+
       // 系統欄位
-      salaryData.status || salaryData['狀態'] || "已計算",
-      salaryData.note || salaryData['備註'] || "",
+      s(salaryData.status, '狀態', '已計算'),
+      s(salaryData.note, '備註', ''),
       new Date()
     ];
     
@@ -967,8 +971,12 @@ function getEmployeeOvertimeRecords(employeeId, yearMonth) {
 }
 
 /**
- * ✅ 取得員工請假記錄
+ * 取得員工請假記錄（函數名留舊名維持相容性，實際意義是取請假記錄）
  */
+function getEmployeeMonthlyLeave(employeeId, yearMonth) {
+  return getEmployeeMonthlySalary(employeeId, yearMonth);
+}
+
 function getEmployeeMonthlySalary(employeeId, yearMonth) {
   try {
     const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("請假記錄");
@@ -1469,8 +1477,9 @@ function getEmployeeMonthlyAttendanceInternal(employeeId, yearMonth) {
           
           if (diffMs > 0) {
             const totalHours = diffMs / (1000 * 60 * 60);
-            // 只有工作超過 4 小時才扣午休 1 小時（避免半天班被多扣）
-            const lunchBreak = totalHours >= 4 ? 1 : 0;
+            // 利用 calculateLunchBreak 檢查工作時段是否包含 12:00-13:00
+            const lunchMs = calculateLunchBreak(inTime, outTime);
+            const lunchBreak = lunchMs / (1000 * 60 * 60); // 0 或 1
             workHours = Math.max(0, totalHours - lunchBreak);
             Logger.log(`   ${date}: ${punchIn} ~ ${punchOut} = ${workHours.toFixed(2)}h (原始: ${totalHours.toFixed(2)}h, 午休: ${lunchBreak}h)`);
           } else {
@@ -2153,7 +2162,7 @@ function getBankName(code) {
   return banks[bankCode] || `未知銀行 (${bankCode})`;
 }
 
-console.log('✅ 薪資匯出功能已載入（管理員專用）');
+Logger.log('✅ 薪資匯出功能已載入（管理員專用）');
 
 
 function testExportSalaryDirect() {
