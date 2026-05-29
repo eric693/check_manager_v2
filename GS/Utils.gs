@@ -24,38 +24,46 @@ function getDistanceMeters_(lat1, lng1, lat2, lng2) {
  * [打卡時間, 員工ID, 薪資, 員工姓名, 上下班, GPS位置, 地點, 備註, 使用裝置詳細訊息]
  * @returns {Array} 每天每位員工的異常結果，格式為 { date: string, reason: string, id: string } 的陣列
  */
-function checkAttendanceAbnormal(attendanceRows) {
+/**
+ * 檢查員工當月異常打卡
+ * @param {Array}  attendanceRows  打卡記錄陣列（可以是空陣列）
+ * @param {string} forceUserId    強制指定員工 ID（當 attendanceRows 為空時仍能正常運作）
+ * @param {string} forceYearMonth 強制指定年月 yyyy-MM（同上）
+ */
+function checkAttendanceAbnormal(attendanceRows, forceUserId, forceYearMonth) {
   const dailyRecords = {};
   const abnormalRecords = [];
   let abnormalIdCounter = 0;
-  
+
   Logger.log("═══════════════════════════════════════");
   Logger.log("🔍 checkAttendanceAbnormal 開始");
   Logger.log(`📊 總記錄數: ${attendanceRows.length}`);
-  
+
   const today = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyy-MM-dd");
-  
+
   // ===== 步驟 1：按使用者和日期分組 =====
-  let targetUserId = null;
-  let targetMonth = null;
-  
+  // 優先使用呼叫方傳入的 userId / yearMonth，
+  // 這樣即使當月完全沒有打卡記錄，也能正確偵測缺卡。
+  let targetUserId = forceUserId || null;
+  let targetMonth  = forceYearMonth || null;
+
   attendanceRows.forEach(row => {
     try {
       const date = getYmdFromRow(row);
       const userId = row.userId;
-      
+
       if (!targetUserId) targetUserId = userId;
       if (!targetMonth && date) targetMonth = date.substring(0, 7);
-      
+
       if (date === today) {
         Logger.log(`⏭️ 跳過今天的資料: ${date}`);
         return;
       }
-      
+
       if (!dailyRecords[userId]) dailyRecords[userId] = {};
       if (!dailyRecords[userId][date]) dailyRecords[userId][date] = [];
       dailyRecords[userId][date].push(row);
-      
+
     } catch (err) {
       Logger.log("❌ 解析 row 失敗: " + JSON.stringify(row) + " | 錯誤: " + err.message);
     }

@@ -295,7 +295,8 @@ function handleGetAbnormalRecords(params) {
   const { month, userId } = params;
   if (!month) return { ok: false, code: "ERR_MISSING_MONTH" };
   const records = getAttendanceRecords(month, userId);
-  const abnormalResults = checkAttendanceAbnormal(records);
+  // 傳入 userId 與 month，確保即使當月完全沒有打卡記錄也能偵測缺卡
+  const abnormalResults = checkAttendanceAbnormal(records, userId, month);
   return { ok: true, records: abnormalResults };
 }
 
